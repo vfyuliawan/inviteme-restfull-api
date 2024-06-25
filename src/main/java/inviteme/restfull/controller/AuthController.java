@@ -19,14 +19,15 @@ public class AuthController {
     @Autowired private AuthService authService;
 
 
+
     @PostMapping(path = "/api/auth/login", 
                 consumes = MediaType.APPLICATION_JSON_VALUE, 
                 produces =  MediaType.APPLICATION_JSON_VALUE
                 )
     public WebResponse<LoginResponse> login (@RequestBody LoginRequest request){
-        LoginResponse login = authService.login(request);
+        LoginResponse loginResponse = authService.login(request);
         return WebResponse.<LoginResponse>builder()
-                .result(login)
+                .result(loginResponse)
                 .code("00")
                 .message("Login Success")
                 .build();

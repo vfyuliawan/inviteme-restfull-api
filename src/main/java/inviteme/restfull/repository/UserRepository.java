@@ -13,4 +13,8 @@ import inviteme.restfull.entiity.User;
 public interface UserRepository extends JpaRepository<User , String> {
     Optional<User> findFirstByToken(String token);
 
+    Optional<User> findUserByToken(String token);
+
+    Optional<User> findUserByUsername(String username);
+
 }

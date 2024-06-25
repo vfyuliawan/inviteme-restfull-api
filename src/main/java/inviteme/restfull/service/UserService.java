@@ -1,6 +1,7 @@
 package inviteme.restfull.service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired private AuthService authService;
 
     @Autowired
     private ValidationService validationService;
@@ -52,9 +55,20 @@ public class UserService {
                 .build();
     }
 
+
+    @Transactional(readOnly = true)
+    public UserResponse getUserByToken(String token){
+        User user = authService.cekUserByToken(token);
+        return UserResponse.builder()
+                .username(user.getUsername())
+                .name(user.getName())        
+                .build();
+    }
+
     @Transactional
-    public UserUpdateResponse update(User user, UserUpdateRequest request){
+    public UserUpdateResponse update(String token, UserUpdateRequest request){
        validationService.validated(request);
+       User user = authService.cekUserByToken(token);
        if (Objects.nonNull(request.getName())) {
             user.setName(request.getName());
        } 
@@ -70,8 +84,6 @@ public class UserService {
                 .build();
 
     }
-
-
 
 
 }

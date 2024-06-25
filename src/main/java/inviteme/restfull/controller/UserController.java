@@ -14,6 +14,7 @@ import inviteme.restfull.service.UserService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 
@@ -39,8 +40,9 @@ public class UserController {
     }
 
     @GetMapping(path = "/api/users/current", produces = MediaType.APPLICATION_JSON_VALUE)
-    public WebResponse<UserResponse> get(User user) {
-        UserResponse userResponse = userService.getUserById(user);
+    public WebResponse<UserResponse> get(@RequestHeader("Authentication") String token) {
+        // UserResponse userResponse = userService.getUserById(user);
+        UserResponse userResponse = userService.getUserByToken(token);
         return WebResponse.<UserResponse>builder()
         .result(userResponse)
         .message("success")
@@ -48,9 +50,11 @@ public class UserController {
         .build();
     }
 
-    @PatchMapping(path = "/api/users/current", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public WebResponse<UserUpdateResponse> update(User user, @RequestBody UserUpdateRequest request) {
-        UserUpdateResponse userResponse = userService.update(user, request);
+    @PatchMapping(path = "/api/users/current/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public WebResponse<UserUpdateResponse> update(
+                                    @RequestBody UserUpdateRequest request, 
+                                    @RequestHeader("Authentication") String token) {
+        UserUpdateResponse userResponse = userService.update(token, request);
         return WebResponse.<UserUpdateResponse>builder()
                     .result(userResponse)
                     .message("update success")

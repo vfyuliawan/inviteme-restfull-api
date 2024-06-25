@@ -42,6 +42,9 @@ public class ProjectService {
     private ProjectRepositry projectRepository;
 
     @Autowired
+    private AuthService authService;
+
+    @Autowired
     private HeroRepository heroRepository;
 
     @Autowired
@@ -60,7 +63,7 @@ public class ProjectService {
     private InfoAcaraRepository infoAcaraRepository;
 
     @Transactional
-    public ProjectResponse createProject(User user,
+    public ProjectResponse createProject(String token,
             ProjectRequest request,
             MultipartFile heroImage,
             MultipartFile homeImage,
@@ -68,6 +71,8 @@ public class ProjectService {
             MultipartFile akadImage,
             MultipartFile resepsiImage) throws IOException {
         validationService.validated(request);
+
+        User user = authService.cekUserByToken(token);
 
         // Create and save Projects entity
         Projects projects = new Projects();

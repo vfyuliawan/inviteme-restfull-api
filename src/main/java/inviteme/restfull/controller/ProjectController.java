@@ -17,6 +17,8 @@ import inviteme.restfull.service.ProjectService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestPart;
 
 @Slf4j
@@ -29,14 +31,17 @@ public class ProjectController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @PostMapping(value = "/api/project", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public WebResponse<ProjectResponse> createProject(@RequestPart("projectRequest") String projectRequestJson,
+    @PostMapping(value = "/api/project", consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public WebResponse<ProjectResponse> createProject(
+        @RequestPart("projectRequest") ProjectRequest projectRequest,
+        @RequestHeader("Authentication") String token,
             @RequestPart("homeImage") MultipartFile homeImage,
             @RequestPart("heroImage") MultipartFile heroImage,
             @RequestPart("coverImage") MultipartFile coverImage,
             @RequestPart("akadImage") MultipartFile akadImage,
-            @RequestPart("resepsiImage") MultipartFile resepsiImage,
-            User user) {
+            @RequestPart("resepsiImage") MultipartFile resepsiImage
+            ) {
 
         // Log received file names and content types
         log.info("Received heroImage: " + heroImage.getOriginalFilename() + ", Content Type: "
@@ -52,8 +57,8 @@ public class ProjectController {
                 throw new IllegalArgumentException("one of image file is empty");
             }
 
-            ProjectRequest projectRequest = objectMapper.readValue(projectRequestJson, ProjectRequest.class);
-            ProjectResponse projectResponse = projectService.createProject(user,
+        //     ProjectRequest projectRequest = objectMapper.readValue(projectRequestJson, ProjectRequest.class);
+            ProjectResponse projectResponse = projectService.createProject(token,
                     projectRequest,
                     heroImage,
                     homeImage,

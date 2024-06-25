@@ -1,5 +1,6 @@
 package inviteme.restfull.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +14,36 @@ import inviteme.restfull.model.request.LoginRequest;
 import inviteme.restfull.model.response.LoginResponse;
 import inviteme.restfull.repository.UserRepository;
 import inviteme.restfull.security.BCrypt;
+import inviteme.restfull.utility.JwtTokenUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.crypto.SecretKey;
 
 @Service
+
+@Slf4j
 public class AuthService {
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    @Autowired private ValidationService validationService;
+    @Autowired
+    private ValidationService validationService;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-    public LoginResponse login(LoginRequest request){
+    public LoginResponse login(LoginRequest request) {
         validationService.validated(request);
+
         User userLogin = userRepository.findById(request.getUsername())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or Password Salah"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or Password Salah"));
 
         if (BCrypt.checkpw(request.getPassword(), userLogin.getPassword())) {
-            userLogin.setToken(UUID.randomUUID().toString());
+            String jwtToken = jwtTokenUtil.generateToken(request.getUsername());
+            userLogin.setToken(jwtToken);
             userLogin.setTokenExpiredAt(nextExpiredDate());
 
             userRepository.save(userLogin);
@@ -35,8 +51,9 @@ public class AuthService {
             return LoginResponse.builder()
                     .token(userLogin.getToken())
                     .tokenExpiredAt(userLogin.getTokenExpiredAt())
+                    .username(userLogin.getUsername())
                     .build();
-        }else{
+        } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or Password Salah");
         }
     }
@@ -46,9 +63,35 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(User user){
+    public void logout(User user) {
         user.setToken(null);
         user.setTokenExpiredAt(null);
         userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public User cekUserByToken(String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Token");
+        }
+        try {
+            String jwtToken = token.substring(7);
+            Claims claims = jwtTokenUtil.parseToken(jwtToken);
+            String username = claims.getSubject();
+            long expirationTimeMillis = claims.getExpiration().getTime();
+            log.info("Claims: {}", claims);
+            log.info("Username: {}", username);
+            log.info("Expiration Time (Millis): {}", expirationTimeMillis);
+            if (expirationTimeMillis < System.currentTimeMillis()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Expired Token");
+            }
+            User user = userRepository.findUserByUsername(username)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+
+            return user;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.toString());
+        }
+
     }
 }

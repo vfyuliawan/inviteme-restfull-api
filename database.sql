@@ -15,6 +15,9 @@ CREATE TABLE users
     UNIQUE (token)
 )ENGINE InnoDB;
 
+ALTER TABLE users
+MODIFY token VARCHAR(512);
+
 
 SELECT * FROM users
 
