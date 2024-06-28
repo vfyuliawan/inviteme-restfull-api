@@ -4,6 +4,7 @@ package inviteme.restfull.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,6 +26,19 @@ public class ErrorController {
                                                   .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<WebResponse<String>> handleAccessDeniedException(AccessDeniedException ex) {
+        WebResponse<String> response = WebResponse.<String>builder()
+                                                  .code("403")
+                                                  .message("Access denied")
+                                                  .messageError(ex.getMessage())
+                                                  .result("")
+                                                  .build();
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+    
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<WebResponse<String>> apiException(ResponseStatusException exception) {

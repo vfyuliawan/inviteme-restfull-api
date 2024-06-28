@@ -45,4 +45,7 @@ public class Projects {
 
     @OneToOne(mappedBy = "project")
     private Acara acara;
+
+    @OneToOne(mappedBy = "project")
+    private BraidInfo braidInfo;
 }

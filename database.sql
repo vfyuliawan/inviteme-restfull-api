@@ -18,6 +18,9 @@ CREATE TABLE users
 ALTER TABLE users
 MODIFY token VARCHAR(512);
 
+ALTER TABLE users
+ADD COLUMN role VARCHAR(50) NOT NULL;
+
 
 SELECT * FROM users
 
@@ -128,6 +131,26 @@ SELECT * FROM acara
 
 DESC acara
 
+CREATE TABLE braid_info (
+    id VARCHAR(255) PRIMARY KEY,
+    id_project VARCHAR(255) NOT NULL,
+    male_name VARCHAR(255),
+    male_mom VARCHAR(255),
+    male_dad VARCHAR(255),
+    male_img VARCHAR(255),
+    female_name VARCHAR(255),
+    female_mom VARCHAR(255),
+    female_dad VARCHAR(255),
+    female_img VARCHAR(255),
+    is_show BOOLEAN NOT NULL,
+    FOREIGN KEY fk_projects_braid_info (id_project) REFERENCES projects(id_project)
+)ENGINE InnoDB;
+
+
+SELECT * FROM braid_info
+
+DESC braid_info
+
 
 
 -- ////////////////////////////////////////////////////////////////////////
@@ -169,5 +192,7 @@ CREATE TABLE addresses(
 SELECT * FROM addresses
 
 DESC addresses
+
+
 
 

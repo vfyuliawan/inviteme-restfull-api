@@ -19,10 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 
 @Slf4j
 @RestController
+@RequestMapping("/api/v1")
 public class ProjectController {
 
     @Autowired
@@ -31,11 +33,10 @@ public class ProjectController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @PostMapping(value = "/api/project", consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    @PostMapping(path = "/project/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public WebResponse<ProjectResponse> createProject(
-        @RequestPart("projectRequest") ProjectRequest projectRequest,
-        @RequestHeader("Authentication") String token,
+        @RequestPart("projectRequest") String projectRequestJson,
             @RequestPart("homeImage") MultipartFile homeImage,
             @RequestPart("heroImage") MultipartFile heroImage,
             @RequestPart("coverImage") MultipartFile coverImage,
@@ -57,8 +58,8 @@ public class ProjectController {
                 throw new IllegalArgumentException("one of image file is empty");
             }
 
-        //     ProjectRequest projectRequest = objectMapper.readValue(projectRequestJson, ProjectRequest.class);
-            ProjectResponse projectResponse = projectService.createProject(token,
+            ProjectRequest projectRequest = objectMapper.readValue(projectRequestJson, ProjectRequest.class);
+            ProjectResponse projectResponse = projectService.createProject(
                     projectRequest,
                     heroImage,
                     homeImage,

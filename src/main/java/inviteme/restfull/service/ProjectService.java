@@ -62,8 +62,11 @@ public class ProjectService {
     @Autowired
     private InfoAcaraRepository infoAcaraRepository;
 
+    @Autowired
+    GetUserService getUserService;
+
     @Transactional
-    public ProjectResponse createProject(String token,
+    public ProjectResponse createProject(
             ProjectRequest request,
             MultipartFile heroImage,
             MultipartFile homeImage,
@@ -72,7 +75,7 @@ public class ProjectService {
             MultipartFile resepsiImage) throws IOException {
         validationService.validated(request);
 
-        User user = authService.cekUserByToken(token);
+        User user = getUserService.getUserLogin();
 
         // Create and save Projects entity
         Projects projects = new Projects();
@@ -84,13 +87,9 @@ public class ProjectService {
 
         // Create and save Hero entity
         Hero hero = storeHero(projects, request, heroImage, user.getUsername());
-
         Home home = storeHome(projects, request, homeImage, user.getUsername());
-
         Cover cover = storeCover(projects, request, coverImage, user.getUsername());
-
         Theme theme = storTheme(projects, request);
-
         Acara acara = storeAcara(projects, request, akadImage, resepsiImage, user.getUsername());
 
         // Update Projects entity with the Hero reference
@@ -272,7 +271,8 @@ public class ProjectService {
                 .lokasiResepsi(projects.getAcara().getLokasiResepsi())
                 .dateResepsi(projects.getAcara().getDateResepsi())
                 .mapResepsi(projects.getAcara().getMapResepsi())
-                .imageResepsi(ApiEnum.getMainUrl() + "/api/images/" + username + "/" + projects.getAcara().getImgResepsi())
+                .imageResepsi(
+                        ApiEnum.getMainUrl() + "/api/images/" + username + "/" + projects.getAcara().getImgResepsi())
                 .build();
 
         InfoAcaraResponse infoAcaraResponse = ProjectResponse.InfoAcaraResponse.builder()
