@@ -1,6 +1,7 @@
 package inviteme.restfull.service;
 
 import inviteme.restfull.entiity.Acara;
+import inviteme.restfull.entiity.BraidInfo;
 import inviteme.restfull.entiity.Cover;
 import inviteme.restfull.entiity.Hero;
 import inviteme.restfull.entiity.Home;
@@ -10,10 +11,13 @@ import inviteme.restfull.entiity.User;
 import inviteme.restfull.enumiration.ApiEnum;
 import inviteme.restfull.model.request.ProjectRequest;
 import inviteme.restfull.model.response.ProjectResponse;
+import inviteme.restfull.model.response.ProjectResponse.BraidInfoResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoAcaraResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoAkadResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoResepsiResponse;
+import inviteme.restfull.model.response.ProjectResponse.MaleFemaleInfoResponse;
 import inviteme.restfull.model.response.ProjectResponse.ThemeResponse;
+import inviteme.restfull.repository.BraidInfoRepository;
 import inviteme.restfull.repository.CoverRepository;
 import inviteme.restfull.repository.HeroRepository;
 import inviteme.restfull.repository.HomeRepository;
@@ -63,6 +67,9 @@ public class ProjectService {
     private InfoAcaraRepository infoAcaraRepository;
 
     @Autowired
+    private BraidInfoRepository braidInfoRepository;
+
+    @Autowired
     GetUserService getUserService;
 
     @Transactional
@@ -72,7 +79,9 @@ public class ProjectService {
             MultipartFile homeImage,
             MultipartFile coverImage,
             MultipartFile akadImage,
-            MultipartFile resepsiImage) throws IOException {
+            MultipartFile resepsiImage,
+            MultipartFile maleInfoImage,
+            MultipartFile femaleInfoImage) throws IOException {
         validationService.validated(request);
 
         User user = getUserService.getUserLogin();
@@ -91,6 +100,7 @@ public class ProjectService {
         Cover cover = storeCover(projects, request, coverImage, user.getUsername());
         Theme theme = storTheme(projects, request);
         Acara acara = storeAcara(projects, request, akadImage, resepsiImage, user.getUsername());
+        BraidInfo braidInfo = storeBraidInfo(projects, request, homeImage, femaleInfoImage, user.getUsername());
 
         // Update Projects entity with the Hero reference
         projects.setHero(hero);
@@ -98,6 +108,7 @@ public class ProjectService {
         projects.setCover(cover);
         projects.setTheme(theme);
         projects.setAcara(acara);
+        projects.setBraidInfo(braidInfo);
         projectRepository.save(projects);
 
         return toProjectResponse(projects, user.getUsername());
@@ -200,6 +211,38 @@ public class ProjectService {
         return save;
     }
 
+    public BraidInfo storeBraidInfo(Projects projects,
+            ProjectRequest request,
+            MultipartFile maleImage,
+            MultipartFile femaleImage,
+            String username)
+            throws IOException {
+
+        log.info("REQUEST ACARA {}", request.getBraidInfo());
+
+        BraidInfo braidInfo = new BraidInfo();
+        braidInfo.setId(UUID.randomUUID().toString());
+        braidInfo.setProject(projects);
+        braidInfo.setShow(request.getBraidInfo().getIsShow());
+        
+        braidInfo.setMaleName(request.getBraidInfo().getMale().getName());
+        braidInfo.setMaleMom(request.getBraidInfo().getMale().getMom());
+        braidInfo.setMaleDad(request.getBraidInfo().getMale().getDad());
+
+        braidInfo.setFemaleName(request.getBraidInfo().getFemale().getName());
+        braidInfo.setFemaleMom(request.getBraidInfo().getFemale().getMom());
+        braidInfo.setFemaleDad(request.getBraidInfo().getFemale().getDad());
+
+        String maleImg = saveImage(maleImage, username);
+        String femaleImg = saveImage(femaleImage, username);
+
+        braidInfo.setMaleImg(maleImg);
+        braidInfo.setFemaleImg(femaleImg);
+
+        BraidInfo save = braidInfoRepository.save(braidInfo);
+        return save;
+    }
+
     private String saveImage(MultipartFile image, String username) throws IOException {
         if (image.isEmpty()) {
             throw new IllegalArgumentException("Image file is empty");
@@ -280,6 +323,26 @@ public class ProjectService {
                 .resepsi(resepsi)
                 .build();
 
+        MaleFemaleInfoResponse male = MaleFemaleInfoResponse.builder()
+                .name(projects.getBraidInfo().getMaleName())
+                .mom(projects.getBraidInfo().getMaleMom())
+                .dad(projects.getBraidInfo().getMaleDad())
+                .image(projects.getBraidInfo().getMaleImg())
+                .build();
+
+        MaleFemaleInfoResponse female = MaleFemaleInfoResponse.builder()
+                .name(projects.getBraidInfo().getFemaleName())
+                .mom(projects.getBraidInfo().getFemaleMom())
+                .dad(projects.getBraidInfo().getFemaleDad())
+                .image(projects.getBraidInfo().getFemaleImg())
+                .build();
+
+        BraidInfoResponse braidInfoResponse = ProjectResponse.BraidInfoResponse.builder()
+                .male(male)
+                .female(female)
+                .isShow(projects.getBraidInfo().isShow())
+                .build();
+
         return ProjectResponse.builder()
                 .title(projects.getTitle())
                 .hero(heroResponse)
@@ -287,6 +350,7 @@ public class ProjectService {
                 .cover(coverResponse)
                 .theme(themeResponse)
                 .infoAcara(infoAcaraResponse)
+                .braidInfo(braidInfoResponse)
                 .build();
     }
 }

@@ -33,15 +33,17 @@ public class ProjectController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @PostMapping(path = "/project/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    @PostMapping(path = "/project/create", consumes = MediaType.MULTIPART_MIXED_VALUE
     )
     public WebResponse<ProjectResponse> createProject(
-        @RequestPart("projectRequest") String projectRequestJson,
+        @RequestPart("projectRequest") ProjectRequest projectRequest,
             @RequestPart("homeImage") MultipartFile homeImage,
             @RequestPart("heroImage") MultipartFile heroImage,
             @RequestPart("coverImage") MultipartFile coverImage,
             @RequestPart("akadImage") MultipartFile akadImage,
-            @RequestPart("resepsiImage") MultipartFile resepsiImage
+            @RequestPart("resepsiImage") MultipartFile resepsiImage,
+            @RequestPart("maleInfoImage") MultipartFile maleInfoImage,
+            @RequestPart("femaleInfoImage") MultipartFile femaleInfoImage
             ) {
 
         // Log received file names and content types
@@ -58,14 +60,17 @@ public class ProjectController {
                 throw new IllegalArgumentException("one of image file is empty");
             }
 
-            ProjectRequest projectRequest = objectMapper.readValue(projectRequestJson, ProjectRequest.class);
+            // ProjectRequest projectRequest = objectMapper.readValue(projectRequestJson, ProjectRequest.class);
             ProjectResponse projectResponse = projectService.createProject(
                     projectRequest,
                     heroImage,
                     homeImage,
                     coverImage,
                     akadImage,
-                    resepsiImage);
+                    resepsiImage,
+                    maleInfoImage,
+                    femaleInfoImage
+                    );
             return WebResponse.<ProjectResponse>builder()
                     .message("success")
                     .code("00")

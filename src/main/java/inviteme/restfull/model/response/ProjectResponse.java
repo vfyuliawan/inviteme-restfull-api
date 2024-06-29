@@ -19,6 +19,7 @@ public class ProjectResponse {
     private CoverResponse cover;
     private ThemeResponse theme;
     private InfoAcaraResponse infoAcara;
+    private BraidInfoResponse braidInfo;
 
     @Data
     @AllArgsConstructor
@@ -126,6 +127,29 @@ public class ProjectResponse {
     public static class InfoAcaraResponse {
         private InfoAkadResponse akad;
         private InfoResepsiResponse resepsi;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MaleFemaleInfoResponse {
+        private String name;
+        private String image;
+        private String mom;
+        private String dad;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class BraidInfoResponse {
+        private MaleFemaleInfoResponse male;
+        private MaleFemaleInfoResponse female;
+        private Boolean isShow;
+
     }
 
 

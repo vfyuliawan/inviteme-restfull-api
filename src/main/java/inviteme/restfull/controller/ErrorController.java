@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
 import inviteme.restfull.model.response.WebResponse;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
@@ -38,7 +41,40 @@ public class ErrorController {
                                                   .build();
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
+
+     @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<WebResponse<String>> handleExpiredJwtException(ExpiredJwtException ex) {
+        WebResponse<String> response = WebResponse.<String>builder()
+                                                  .code("401")
+                                                  .message("JWT Token has expired")
+                                                  .messageError(ex.getMessage())
+                                                  .result("")
+                                                  .build();
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
     
+    @ExceptionHandler(SignatureException.class)
+    public ResponseEntity<WebResponse<String>> handleSignatureException(SignatureException ex) {
+        WebResponse<String> response = WebResponse.<String>builder()
+                                                  .code("401")
+                                                  .message("Invalid JWT signature")
+                                                  .messageError(ex.getMessage())
+                                                  .result("")
+                                                  .build();
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+     @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<WebResponse<String>> handleMalformedJwtException(MalformedJwtException ex) {
+        WebResponse<String> response = WebResponse.<String>builder()
+                                                  .code("400")
+                                                  .message("Malformed JWT token")
+                                                  .messageError(ex.getMessage())
+                                                  .result("")
+                                                  .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<WebResponse<String>> apiException(ResponseStatusException exception) {

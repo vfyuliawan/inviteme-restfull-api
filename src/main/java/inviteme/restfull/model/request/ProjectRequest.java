@@ -29,6 +29,8 @@ public class ProjectRequest {
 
     private InfoAcaraRequest infoAcara;
 
+    private BraidInfoRequest braidInfo;
+
 
 
     @Data
@@ -142,5 +144,29 @@ public class ProjectRequest {
     public static class InfoAcaraRequest {
         private InfoAkadRequest akad;
         private InfoResepsiRequest resepsi;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MaleFemaleInfoRequest {
+        @NotBlank
+        private String name;
+        @NotBlank
+        private String mom;
+        @NotBlank
+        private String dad;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class BraidInfoRequest {
+        private MaleFemaleInfoRequest male;
+        private MaleFemaleInfoRequest female;
+        private Boolean isShow;
     }
 }
