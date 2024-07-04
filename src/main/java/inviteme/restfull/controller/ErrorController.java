@@ -5,9 +5,11 @@ package inviteme.restfull.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
 import inviteme.restfull.model.response.WebResponse;
@@ -73,6 +75,17 @@ public class ErrorController {
                                                   .result("")
                                                   .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<WebResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        WebResponse<String> errorResponse = WebResponse.<String>builder()
+                                .code("400")
+                                .message("Bad Request")
+                                .messageError(ex.getMessage())
+                                .result("")
+                                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 

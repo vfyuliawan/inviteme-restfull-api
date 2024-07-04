@@ -19,9 +19,16 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public WebResponse<AuthenticationResponse> register(
             @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authenticationService.register(request));
+
+        AuthenticationResponse register = authenticationService.register(request);
+
+        return WebResponse.<AuthenticationResponse>builder()
+            .code("00")
+            .message("Register success")
+            .result(register)
+            .build();
 
     }
 

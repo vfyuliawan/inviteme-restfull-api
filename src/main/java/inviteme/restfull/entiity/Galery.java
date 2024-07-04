@@ -1,44 +1,37 @@
 package inviteme.restfull.entiity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.OneToOne; 
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "Hero")
-public class Hero {
-
+@Table(name = "galery")
+public class Galery {
     @Id
+    @Column(name = "id_galery")
     private String id;
 
     @OneToOne
-    @JoinColumn(name = "id_project", referencedColumnName = "id_project") 
+    @JoinColumn(name = "id_project", referencedColumnName = "id_project")
     private Projects project;
 
-    @Column(name = "title", nullable = false)
-    private String title;
-
-    @Lob
-    @Column(name = "img", columnDefinition = "LONGTEXT")
-    private String img;
-
-    @Column(name = "date")
-    private LocalDateTime date;
+    @OneToMany(mappedBy = "galery")
+    private List<Galeries> galeries;
 
     @Column(name = "is_show")
-    private Boolean isShow;
-
+    private boolean isShow;
 }

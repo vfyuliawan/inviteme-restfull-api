@@ -1,11 +1,12 @@
 package inviteme.restfull.entiity;
 
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -13,33 +14,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
-@Getter
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "home")
-public class Home {
-
+@Setter
+@Getter
+@Table(name = "gift")
+public class Gift {
     @Id
+    @Column(name = "id_gift")
     private String id;
 
     @OneToOne
     @JoinColumn(name = "id_project", referencedColumnName = "id_project")
     private Projects project;
 
-    @Column(name = "title", nullable = false)
-    private String title;
-
-    @Column(name = "quotes", nullable = false)
-    private String quotes;
-
-    @Lob
-    @Column(name = "img", columnDefinition = "LONGTEXT")
-    private String img;
+    @OneToMany(mappedBy = "gift")
+    private List<Gifts> gifts;
 
     @Column(name = "is_show")
-    private Boolean isShow;
-
-
+    private boolean isShow;
 }

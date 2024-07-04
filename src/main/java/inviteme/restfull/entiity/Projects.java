@@ -1,5 +1,7 @@
 package inviteme.restfull.entiity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,6 +33,9 @@ public class Projects {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "countdown")
+    private LocalDateTime countdown;
+
     @OneToOne(mappedBy = "project")
     private Hero hero;
 
@@ -48,4 +53,13 @@ public class Projects {
 
     @OneToOne(mappedBy = "project")
     private BraidInfo braidInfo;
+
+    @OneToOne(mappedBy = "project")
+    private Story story;
+
+    @OneToOne(mappedBy = "project")
+    private Galery galery;
+
+    @OneToOne(mappedBy = "project")
+    private Gift gift;
 }

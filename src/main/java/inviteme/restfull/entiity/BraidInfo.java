@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,8 @@ public class BraidInfo {
     @Column(name = "male_dad")
     private String maleDad;
 
-    @Column(name = "male_img")
+    @Lob
+    @Column(name = "male_img", columnDefinition = "LONGTEXT")
     private String maleImg;
 
     @Column(name = "female_name")
@@ -49,7 +51,8 @@ public class BraidInfo {
     @Column(name = "female_dad")
     private String femaleDad;
 
-    @Column(name = "female_img")
+    @Lob
+    @Column(name = "female_img", columnDefinition = "LONGTEXT")
     private String femaleImg;
 
     @Column(name = "is_show")

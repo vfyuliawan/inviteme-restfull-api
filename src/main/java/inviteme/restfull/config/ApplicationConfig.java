@@ -17,7 +17,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import inviteme.restfull.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class ApplicationConfig {
@@ -31,11 +33,14 @@ public class ApplicationConfig {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User name or password salah"));
     }
 
+    
+
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
+        log.info("ERROR {}", authProvider);
         return authProvider;
     }
 

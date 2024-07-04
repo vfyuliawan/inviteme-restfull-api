@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -38,8 +39,8 @@ public class Acara {
     @Column(name = "lokasi_akad")
     private String lokasiAkad;
 
-
-    @Column(name = "img_akad")
+    @Lob
+    @Column(name = "img_akad", columnDefinition = "LONGTEXT")
     private String imgAkad;
 
     @Column(name = "date_akad")
@@ -55,8 +56,8 @@ public class Acara {
     @Column(name = "lokasi_resepsi")
     private String lokasiResepsi;
 
-
-    @Column(name = "img_resepsi")
+    @Lob
+    @Column(name = "img_resepsi", columnDefinition = "LONGTEXT")
     private String imgResepsi;
 
     @Column(name = "date_resepsi")

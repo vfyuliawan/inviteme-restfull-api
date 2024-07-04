@@ -1,6 +1,7 @@
 package inviteme.restfull.model.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,12 +15,16 @@ import lombok.NoArgsConstructor;
 public class ProjectResponse {
 
     private String title;
+    private LocalDateTime countdown;
     private HeroResponse hero;
     private HomeResponse home;
     private CoverResponse cover;
     private ThemeResponse theme;
     private InfoAcaraResponse infoAcara;
     private BraidInfoResponse braidInfo;
+    private StoryResponse story;
+    private GaleryResponse galery;
+    private GiftResponse gift;
 
     @Data
     @AllArgsConstructor
@@ -43,13 +48,12 @@ public class ProjectResponse {
         private Boolean isShow;
     }
 
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     public static class CoverResponse {
-        
+
         private String title;
 
         private String img;
@@ -64,7 +68,7 @@ public class ProjectResponse {
     @NoArgsConstructor
     @Builder
     public static class ThemeResponse {
-        
+
         private String slug;
 
         private String alamat;
@@ -74,25 +78,21 @@ public class ProjectResponse {
         private String theme;
 
         private String music;
-        
-    }
 
+    }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     public static class InfoAkadResponse {
-        
+
         private String titleAkad;
 
-        
         private String mapAkad;
 
-        
         private String lokasiAkad;
 
-        
         private LocalDateTime dateAkad;
 
         private String imageAkad;
@@ -103,22 +103,18 @@ public class ProjectResponse {
     @NoArgsConstructor
     @Builder
     public static class InfoResepsiResponse {
-        
+
         private String titleResepsi;
 
-        
         private String mapResepsi;
 
-        
         private String lokasiResepsi;
 
-        
         private LocalDateTime dateResepsi;
 
         private String imageResepsi;
 
     }
-
 
     @Data
     @AllArgsConstructor
@@ -140,7 +136,6 @@ public class ProjectResponse {
         private String dad;
     }
 
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -152,8 +147,64 @@ public class ProjectResponse {
 
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class StoryResponse {
+        private List<StoriesResponse> stories;
+        private Boolean isShow;
 
+    }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class StoriesResponse {
+        private String title;
+        private String text;
+        private String image;
+        private LocalDateTime date;
 
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GaleryResponse {
+        private List<String> galeries;
+        private Boolean isShow;
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GaleriesResponse {
+        private String image;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GiftResponse {
+        private List<GiftsResponse> gifts;
+        private Boolean isShow;
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GiftsResponse {
+        private String image;
+        private String name;
+        private String noRek;
+    }
 
 }

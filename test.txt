@@ -1,0 +1,103 @@
+a31ab620-43dc-482d-893a-3a23e1534850
+
+
+{
+    "title": "Galang and Via falen",
+    "countdown": "2024-07-01T08:46:32",
+    "hero": {
+      "title": "Galang and Via falen",
+      "img": "string",
+      "date": "2024-07-01T08:46:32",
+      "isShow": true
+    },
+    "home": {
+      "title": "Galang and Via falen",
+      "quotes": "string",
+      "img": "string",
+      "isShow": true
+    },
+    "cover": {
+      "title": "Galang and Via falen",
+      "img": "string",
+      "date": "2024-07-01T08:46:32",
+      "isShow": true
+    },
+    "theme": {
+      "slug": "string",
+      "alamat": "string",
+      "embeded": "string",
+      "theme": "string",
+      "music": "string"
+    },
+    "infoAcara": {
+      "akad": {
+        "titleAkad": "string",
+        "mapAkad": "string",
+        "lokasiAkad": "string",
+        "dateAkad": "2024-07-01T08:46:32",
+        "imageAkad": "string"
+      },
+      "resepsi": {
+        "titleResepsi": "string",
+        "mapResepsi": "string",
+        "lokasiResepsi": "string",
+        "dateResepsi": "2024-07-01T08:46:32",
+        "imageResepsi": "string"
+      }
+    },
+    "braidInfo": {
+      "male": {
+        "name": "string",
+        "image": "string",
+        "mom": "string",
+        "dad": "string"
+      },
+      "female": {
+        "name": "string",
+        "image": "string",
+        "mom": "string",
+        "dad": "string"
+      },
+      "isShow": true
+    },
+    "story": {
+      "stories": [
+        {
+          "title": "storiesB",
+          "text": "string",
+          "image": "string",
+          "date": "2024-07-01T08:46:32"
+        },
+        {
+          "title": "storiesA",
+          "text": "string",
+          "image": "string",
+          "date": "2024-07-01T08:46:32"
+        },
+{
+          "title": "storiesC",
+          "text": "string",
+          "image": "string",
+          "date": "2024-07-01T08:46:32"
+        }
+      ],
+      "isShow": true
+    },
+    "galery": {
+      "galeries": [
+        "image1",
+        "image2"
+      ],
+      "isShow": true
+    },
+    "gift": {
+      "gifts": [
+        {
+          "image": "gift1",
+          "name": "string",
+          "noRek": "string"
+        }
+      ],
+      "isShow": null
+    }
+  }

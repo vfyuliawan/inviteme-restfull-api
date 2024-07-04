@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import inviteme.restfull.utility.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
@@ -58,16 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("AUTHHEADER USERNAME {}", username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                // if (jwtService.isTokenValid(username, userDetails)) {
-                // UsernamePasswordAuthenticationToken authToken = new
-                // UsernamePasswordAuthenticationToken(
-                // userDetails, null, userDetails.getAuthorities()
-                // );
-                // authToken.setDetails(new
-                // WebAuthenticationDetailsSource().buildDetails(request));
-                // SecurityContextHolder.getContext().setAuthentication(authToken);
-                // }
-                // }
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -85,6 +77,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (MalformedJwtException e) {
             request.setAttribute("malformed", e.getMessage());
             throw e;
+        } catch (ResponseStatusException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(e.getReason());
         }
 
     }

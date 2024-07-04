@@ -1,6 +1,6 @@
 package inviteme.restfull.model.request;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -19,6 +19,8 @@ public class ProjectRequest {
     @NotBlank
     private String title;
 
+    private LocalDateTime countdown;
+
     private HeroRequest hero;
 
     private HomeRequest home;
@@ -31,19 +33,19 @@ public class ProjectRequest {
 
     private BraidInfoRequest braidInfo;
 
+    private StoryRequest story;
 
+    private GaleryRequest galery;
+
+    private GiftRequest gift;
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     public static class HeroRequest {
-        @NotBlank
-        private String title;
 
-        private MultipartFile img;
-
-        private LocalDateTime date;
+        private String img;
 
         private Boolean isShow;
     }
@@ -53,13 +55,9 @@ public class ProjectRequest {
     @NoArgsConstructor
     @Builder
     public static class HomeRequest {
-        @NotBlank
-        private String title;
-
-        @NotBlank
         private String quotes;
 
-        private MultipartFile img;
+        private String img;
 
         private Boolean isShow;
     }
@@ -69,12 +67,8 @@ public class ProjectRequest {
     @NoArgsConstructor
     @Builder
     public static class CoverRequest {
-        @NotBlank
-        private String title;
 
-        private MultipartFile img;
-
-        private LocalDateTime date;
+        private String img;
 
         private Boolean isShow;
     }
@@ -100,22 +94,19 @@ public class ProjectRequest {
         private String music;
     }
 
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     public static class InfoAkadRequest {
-        @NotBlank
         private String titleAkad;
 
-        @NotBlank
         private String mapAkad;
 
-        @NotBlank
+        private String imgAkad;
+
         private String lokasiAkad;
 
-        @NotBlank
         private LocalDateTime dateAkad;
     }
 
@@ -124,16 +115,14 @@ public class ProjectRequest {
     @NoArgsConstructor
     @Builder
     public static class InfoResepsiRequest {
-        @NotBlank
         private String titleResepsi;
 
-        @NotBlank
         private String mapResepsi;
 
-        @NotBlank
+        private String imgResepsi;
+
         private String lokasiResepsi;
 
-        @NotBlank
         private LocalDateTime dateResepsi;
     }
 
@@ -151,14 +140,11 @@ public class ProjectRequest {
     @NoArgsConstructor
     @Builder
     public static class MaleFemaleInfoRequest {
-        @NotBlank
         private String name;
-        @NotBlank
         private String mom;
-        @NotBlank
         private String dad;
+        private String photo;
     }
-
 
     @Data
     @AllArgsConstructor
@@ -168,5 +154,65 @@ public class ProjectRequest {
         private MaleFemaleInfoRequest male;
         private MaleFemaleInfoRequest female;
         private Boolean isShow;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class StoryRequest {
+        private List<StoriestRequest> stories;
+        private Boolean isShow;
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class StoriestRequest {
+        private String title;
+        private String text;
+        private String image;
+        private LocalDateTime date;
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GaleryRequest {
+        private List<String> galeries;
+        private Boolean isShow;
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GaleriesRequest {
+        private String image;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GiftRequest {
+        private List<GiftsRequest> gifts;
+        private Boolean isShow;
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GiftsRequest {
+        private String image;
+        private String name;
+        private String noRek;
     }
 }

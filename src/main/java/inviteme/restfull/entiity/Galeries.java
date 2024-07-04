@@ -5,40 +5,29 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
-import jakarta.persistence.OneToOne; 
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "Hero")
-public class Hero {
-
+@Table(name = "galeries")
+public class Galeries {
     @Id
+    @Column(name = "id")
     private String id;
 
-    @OneToOne
-    @JoinColumn(name = "id_project", referencedColumnName = "id_project") 
-    private Projects project;
-
-    @Column(name = "title", nullable = false)
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "id_galery", referencedColumnName = "id_galery")
+    private Galery galery;
 
     @Lob
     @Column(name = "img", columnDefinition = "LONGTEXT")
     private String img;
-
-    @Column(name = "date")
-    private LocalDateTime date;
-
-    @Column(name = "is_show")
-    private Boolean isShow;
-
 }
