@@ -87,7 +87,7 @@ CREATE TABLE cover (
     id VARCHAR(255) PRIMARY KEY,
     id_project VARCHAR(255) NOT NULL,
     title VARCHAR(255) NOT NULL,
-    img VARCHAR(255),
+    img LONGTEXT,
     date DATETIME,
     is_show BOOLEAN NOT NULL,
     FOREIGN KEY fk_projects_cover (id_project) REFERENCES projects(id_project)
@@ -128,12 +128,12 @@ CREATE TABLE acara (
     title_akad VARCHAR(255) NOT NULL,
     map_akad VARCHAR(255),
     lokasi_akad VARCHAR(255),
-    img_akad VARCHAR(255),
+    img_akad LONGTEXT,
     date_akad DATETIME,
     title_resepsi VARCHAR(255),
     map_resepsi VARCHAR(255),
     lokasi_resepsi VARCHAR(255),
-    img_resepsi VARCHAR(255),
+    img_resepsi LONGTEXT,
     date_resepsi DATETIME,
     FOREIGN KEY fk_projects_acara (id_project) REFERENCES projects(id_project)
 )ENGINE InnoDB;
@@ -153,11 +153,11 @@ CREATE TABLE braid_info (
     male_name VARCHAR(255),
     male_mom VARCHAR(255),
     male_dad VARCHAR(255),
-    male_img VARCHAR(255),
+    male_img LONGTEXT,
     female_name VARCHAR(255),
     female_mom VARCHAR(255),
     female_dad VARCHAR(255),
-    female_img VARCHAR(255),
+    female_img LONGTEXT,
     is_show BOOLEAN NOT NULL,
     FOREIGN KEY fk_projects_braid_info (id_project) REFERENCES projects(id_project)
 )ENGINE InnoDB;
