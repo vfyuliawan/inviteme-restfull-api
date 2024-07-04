@@ -3,7 +3,7 @@ COPY . .
 RUN mvn clean package -DSkipTests
 
 FROM openjdk:17-jdk-slim
-COPY --from=build /target/inviteme-restfull-api-0.0.1-SNAPSHOT.jar inviteme.jar
+COPY --from=build /target/inviteme-restfull-api-0.0.1-SNAPSHOT.jar inviteme-restfull-api.jar
 EXPOSE 8080
-ENTRYPOINT [ "java","-jar","inviteme.jar" ]
+ENTRYPOINT [ "java","-jar","inviteme-restfull-api.jar" ]
 
