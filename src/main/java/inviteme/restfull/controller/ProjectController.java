@@ -135,6 +135,19 @@ public class ProjectController {
                                 .build();
         }
 
+
+        @GetMapping(path = "/project/getBySlug")
+        public WebResponse<ProjectResponse> getProjectBySlugAndTheme(
+                        @RequestParam String slug
+                        ) {
+                ProjectResponse projectResponse = projectService.getProjectBySlugAndTheme(slug);
+                return WebResponse.<ProjectResponse>builder()
+                                .message("success")
+                                .code("00")
+                                .result(projectResponse)
+                                .build();
+        }
+
         @PatchMapping(path = "/project/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         public WebResponse<ProjectResponse> update(
                         @RequestBody ProjectRequest projectRequest,

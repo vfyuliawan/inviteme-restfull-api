@@ -7,9 +7,13 @@ import inviteme.restfull.model.response.LoginResponse;
 import inviteme.restfull.model.response.WebResponse;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -43,5 +47,27 @@ public class AuthenticationController {
                 .code("00")
                 .build();
     }
+
+    @GetMapping("/cekUserLogin")
+    public WebResponse<Boolean> cekUserLogin() {
+        Boolean cekUserLogin = authenticationService.cekUserLogin();
+        return WebResponse.<Boolean>builder()
+                .code("00")
+                .message("success")
+                .result(cekUserLogin)
+                .build();
+    }
+
+    @DeleteMapping("/logout")
+    public WebResponse<Boolean> logout() {
+        Boolean logoutUser = authenticationService.logout();
+        return WebResponse.<Boolean>builder()
+                .code("00")
+                .message("success")
+                .result(logoutUser)
+                .build();
+    }
+    
+    
 
 }

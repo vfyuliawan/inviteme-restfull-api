@@ -10,8 +10,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import inviteme.restfull.entiity.User;
 import inviteme.restfull.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class GetUserService {
 
     @Autowired
@@ -28,6 +30,7 @@ public class GetUserService {
             // user.setProjects(userDetails.getProjects());
             User userResponse = userRepository.findUserByToken(userDetails.getToken())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbiden Kingdom"));
+                    log.info("userResponse {}", userResponse.getAlamat());
             return userResponse;
         } else {
             throw new RuntimeException("User details not found");

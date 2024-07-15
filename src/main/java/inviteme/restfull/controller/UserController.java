@@ -50,7 +50,10 @@ public class UserController {
         User userLogin = getUserService.getUserLogin();
         UserResponse userResponse = new UserResponse();
         userResponse.setName(userLogin.getName());
+        userResponse.setAlamat(userLogin.getAlamat());
+        userResponse.setEmail(userLogin.getEmail());
         userResponse.setUsername(userLogin.getUsername());
+        userResponse.setPhoto(userLogin.getPhoto());
         return WebResponse.<UserResponse>builder()
                 .result(userResponse)
                 .message("success")
@@ -59,7 +62,7 @@ public class UserController {
     }
 
     @PatchMapping(path = "/user/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public WebResponse<UserUpdateResponse> getAll(
+    public WebResponse<UserUpdateResponse> updateUser(
             @RequestBody UserUpdateRequest request) {
         UserUpdateResponse userResponse = userService.update(request);
         return WebResponse.<UserUpdateResponse>builder()

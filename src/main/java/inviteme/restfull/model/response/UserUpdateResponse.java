@@ -14,5 +14,12 @@ public class UserUpdateResponse {
     private String username;
 
     private String name;
+
+    private String alamat;
+
+    private String email;
+
+    private String photo;
+
     
 }

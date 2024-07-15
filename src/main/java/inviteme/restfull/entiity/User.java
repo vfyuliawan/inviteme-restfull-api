@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,11 +32,21 @@ public class User implements UserDetails {
     private String username;
 
     private String password;
-    
+
     private String name;
-    
+
     private String token;
-    
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "alamat")
+    private String alamat;
+
+    @Lob
+    @Column(name = "photo", columnDefinition = "LONGTEXT")
+    private String photo;
+
     @Column(name = "token_expired_at")
     private Long tokenExpiredAt;
 
@@ -52,7 +63,6 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
- 
 
     @Override
     public boolean isAccountNonExpired() {
@@ -74,7 +84,5 @@ public class User implements UserDetails {
         return true;
 
     }
-
-    
 
 }

@@ -861,6 +861,14 @@ public class ProjectService {
 
         }
 
+        @Transactional(readOnly = true)
+        public ProjectResponse getProjectBySlugAndTheme(String slug) {
+                Projects project = projectRepository.findByThemeSlug(slug).orElseThrow(
+                                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
+                return toNewProjectResponse(project);
+
+        }
+
         public ProjectResponse updateProject(
                         String projectId,
                         ProjectRequest request) throws IOException {

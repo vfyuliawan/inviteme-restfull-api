@@ -15,5 +15,11 @@ public class UserResponse {
 
     private String name;
 
-    
+    private String alamat;
+
+    private String email;
+
+    private String photo;
+
+
 }

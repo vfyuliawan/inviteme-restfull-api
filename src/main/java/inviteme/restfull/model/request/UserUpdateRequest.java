@@ -19,4 +19,12 @@ public class UserUpdateRequest {
     @Size(max = 100, min = 4)
     private String password;
 
+    @Size(max = 100, min = 4)
+    private String alamat;
+
+    @Size(max = 100, min = 4)
+    private String email;
+
+    private String photo;
+
 }

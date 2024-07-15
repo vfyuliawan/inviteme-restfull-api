@@ -87,10 +87,25 @@ public class UserService {
             user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
         }
 
+        if (Objects.nonNull(request.getEmail())) {
+            user.setEmail(request.getEmail());
+        }
+
+        if (Objects.nonNull(request.getAlamat())) {
+            user.setAlamat(request.getAlamat());
+        }
+
+        if (Objects.nonNull(request.getPhoto())) {
+            user.setPhoto(request.getPhoto());
+        }
+
         userRepository.save(user);
         return UserUpdateResponse.builder()
                 .name(user.getName())
                 .username(user.getUsername())
+                .alamat(user.getAlamat())
+                .email(user.getEmail())
+                .photo(user.getPhoto())
                 .build();
 
     }
@@ -101,6 +116,9 @@ public class UserService {
             return UserResponse.builder()
                         .name(user.getName())
                         .username(user.getUsername())
+                        .alamat(user.getAlamat())
+                        .email(user.getEmail())
+                        .photo(user.getPhoto())
                         .build();
         }).collect(Collectors.toList());
 

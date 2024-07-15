@@ -3,9 +3,7 @@ package inviteme.restfull.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,38 +28,36 @@ public class SecurityConfiguration {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         WebResponse<String> webResponse = WebResponse.<String>builder()
-                .messageError("Username Or Password Incorect")
+                .messageError("Unauthorization")
                 .code("401")
                 .result(null)
                 .build();
 
-                http
+        http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                    .requestMatchers(
-                        "/api/v1/auth/**", 
-                                 "/swagger-ui/**", 
-                                 "/v3/api-docs/**", 
-                                 "/swagger-ui.html"
-                    ).permitAll()
-                    .anyRequest().authenticated())
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/api/v1/project/getBySlug",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html")
+                        .permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-                http.exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write(
-                    objectMapper.writeValueAsString(webResponse)
-                );
-                }));
-                return http.build();
+        http.exceptionHandling(t -> t.authenticationEntryPoint((request, response, authException) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(webResponse));
+        }));
+        return http.build();
     }
 
 }
