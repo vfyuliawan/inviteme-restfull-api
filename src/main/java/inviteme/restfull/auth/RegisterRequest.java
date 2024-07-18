@@ -1,5 +1,6 @@
 package inviteme.restfull.auth;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,11 @@ public class RegisterRequest {
     private String password;
 
     @Size(max = 100)
+    @Email
     private String name;
+
+    @Size(max = 100)
+    @Email
+    private String email;
 
 }

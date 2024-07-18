@@ -29,8 +29,8 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> userRepository
-        .findUserByUsername(username)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User name or password salah"));
+        .findUserByEmail(username)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email or password salah"));
     }
 
     

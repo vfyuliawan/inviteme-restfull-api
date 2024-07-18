@@ -44,6 +44,7 @@ public class AuthenticationService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setName(request.getName());
+        user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
         String token = jwtTokenUtil.generateToken(user.getUsername());
@@ -63,24 +64,41 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()));
-
-        User userLogin = userRepository.findUserByUsername(request.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or Password Salah"));
-
-        if (BCrypt.checkpw(request.getPassword(), userLogin.getPassword())) {
-            String jwtToken = jwtTokenUtil.generateToken(request.getUsername());
-            userLogin.setToken(jwtToken);
-            userLogin.setTokenExpiredAt(System.currentTimeMillis() + (1000 * 16 * 24 * 30));
-
-            userRepository.save(userLogin);
-
-            return LoginResponse.builder()
-                    .token(userLogin.getToken())
-                    .tokenExpiredAt(userLogin.getTokenExpiredAt())
-                    .username(userLogin.getUsername())
-                    .build();
+        if (request.getUsername().contains("@")) {
+            User userLogin = userRepository.findUserByEmail(request.getUsername())
+                    .orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                                    "Username Email or Password Salah"));
+            if (BCrypt.checkpw(request.getPassword(), userLogin.getPassword())) {
+                String jwtToken = jwtTokenUtil.generateToken(request.getUsername());
+                userLogin.setToken(jwtToken);
+                userLogin.setTokenExpiredAt(System.currentTimeMillis() + (1000 * 16 * 24 * 30));
+                userRepository.save(userLogin);
+                return LoginResponse.builder()
+                        .token(userLogin.getToken())
+                        .tokenExpiredAt(userLogin.getTokenExpiredAt())
+                        .username(userLogin.getUsername())
+                        .build();
+            } else {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username Email or Password Salah");
+            }
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or Password Salah");
+            User userLogin = userRepository.findUserByUsername(request.getUsername())
+                    .orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username Email or Password Salah"));
+            if (BCrypt.checkpw(request.getPassword(), userLogin.getPassword())) {
+                String jwtToken = jwtTokenUtil.generateToken(request.getUsername());
+                userLogin.setToken(jwtToken);
+                userLogin.setTokenExpiredAt(System.currentTimeMillis() + (1000 * 16 * 24 * 30));
+                userRepository.save(userLogin);
+                return LoginResponse.builder()
+                        .token(userLogin.getToken())
+                        .tokenExpiredAt(userLogin.getTokenExpiredAt())
+                        .username(userLogin.getUsername())
+                        .build();
+            } else {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username Email or Password Salah");
+            }
         }
 
     }
