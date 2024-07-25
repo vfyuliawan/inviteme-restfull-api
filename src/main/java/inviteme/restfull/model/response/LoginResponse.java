@@ -1,5 +1,6 @@
 package inviteme.restfull.model.response;
 
+import inviteme.restfull.entiity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,8 @@ public class LoginResponse {
     private String token;
 
     private Long tokenExpiredAt;
+
+    private Role role;
 
 
 }

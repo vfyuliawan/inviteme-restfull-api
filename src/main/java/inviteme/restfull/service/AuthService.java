@@ -52,6 +52,7 @@ public class AuthService {
                     .token(userLogin.getToken())
                     .tokenExpiredAt(userLogin.getTokenExpiredAt())
                     .username(userLogin.getUsername())
+                    .role(userLogin.getRole())
                     .build();
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or Password Salah");

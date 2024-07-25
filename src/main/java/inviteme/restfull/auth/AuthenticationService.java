@@ -77,6 +77,7 @@ public class AuthenticationService {
                 return LoginResponse.builder()
                         .token(userLogin.getToken())
                         .tokenExpiredAt(userLogin.getTokenExpiredAt())
+                        .role(userLogin.getRole())
                         .username(userLogin.getUsername())
                         .build();
             } else {
