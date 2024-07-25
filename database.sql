@@ -1,7 +1,7 @@
 CREATE DATABASE invite_me
 
 
-USE invite_me
+USE invite_me;
 
 
 CREATE TABLE users

@@ -1,9 +1,5 @@
-FROM maven:3.8.1-openjdk-17-slim AS build
-COPY . .
-RUN mvn clean package -DSkipTests
-
 FROM openjdk:17-jdk-slim
-COPY --from=build /target/inviteme-restfull-api-0.0.1-SNAPSHOT.jar inviteme-restfull-api.jar
+WORKDIR /opt/app
+COPY target/inviteme-restfull-api-0.0.1-SNAPSHOT.jar invitemerestfullapi.jar
 EXPOSE 8080
-ENTRYPOINT [ "java","-jar","inviteme-restfull-api.jar" ]
-
+ENTRYPOINT exec java -jar invitemerestfullapi.jar

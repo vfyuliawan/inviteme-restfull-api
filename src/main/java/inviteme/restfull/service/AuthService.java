@@ -1,7 +1,7 @@
 package inviteme.restfull.service;
 
-import java.util.Optional;
-import java.util.UUID;
+// import java.util.Optional;
+// import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,11 @@ import inviteme.restfull.repository.UserRepository;
 import inviteme.restfull.security.BCrypt;
 import inviteme.restfull.utility.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+// import io.jsonwebtoken.Jwts;
+// import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.crypto.SecretKey;
+// import javax.crypto.SecretKey;
 
 @Service
 
