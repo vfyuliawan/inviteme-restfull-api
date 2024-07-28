@@ -2,7 +2,6 @@ package inviteme.restfull.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import inviteme.restfull.model.request.UserUpdateRequest;
 import inviteme.restfull.model.request.VersionUpdateRequest;
 import inviteme.restfull.model.response.VersionResponse;
 import inviteme.restfull.model.response.WebResponse;

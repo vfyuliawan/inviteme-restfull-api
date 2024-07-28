@@ -8,10 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import inviteme.restfull.entiity.Projects;
-import inviteme.restfull.entiity.Theme;
 import inviteme.restfull.entiity.User;
 import java.util.Optional;
-import java.util.List;;
 
 @Repository
 
@@ -25,5 +23,6 @@ public interface ProjectRepositry extends JpaRepository<Projects, String> {
 
         @Query("SELECT p FROM Projects p JOIN p.theme t WHERE t.slug = :slug")
         Optional<Projects> findByThemeSlug(@Param("slug") String slug);
+        
 
 }

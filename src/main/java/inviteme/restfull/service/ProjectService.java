@@ -1175,6 +1175,7 @@ public class ProjectService {
                 }
                 return giftRepository.save(gift);
         }
+
         private void updateGifts(Gifts gifts, GiftsRequest giftsRequest) {
                 if (Objects.nonNull(giftsRequest.getImage())) {
                         gifts.setImage(giftsRequest.getImage());
@@ -1184,6 +1185,15 @@ public class ProjectService {
                 }
                 if (Objects.nonNull(giftsRequest.getNoRek())) {
                         gifts.setNorek(giftsRequest.getNoRek());
+                }
+        }
+
+        public String deleteProject(String id) throws Exception {
+                if (projectRepository.existsById(id)) {
+                        projectRepository.deleteById(id);
+                        return "Success";
+                } else {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "id not found");
                 }
         }
 

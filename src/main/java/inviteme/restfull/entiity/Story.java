@@ -1,5 +1,6 @@
 package inviteme.restfull.entiity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -30,7 +31,7 @@ public class Story {
     @JoinColumn(name = "id_project", referencedColumnName = "id_project")
     private Projects project;
 
-    @OneToMany(mappedBy = "story")
+    @OneToMany(mappedBy = "story",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Stories> stories;
 
     @Column(name = "is_show")

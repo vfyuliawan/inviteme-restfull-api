@@ -3,7 +3,9 @@ package inviteme.restfull.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -135,11 +138,9 @@ public class ProjectController {
                                 .build();
         }
 
-
         @GetMapping(path = "/project/getBySlug")
         public WebResponse<ProjectResponse> getProjectBySlugAndTheme(
-                        @RequestParam String slug
-                        ) {
+                        @RequestParam String slug) {
                 ProjectResponse projectResponse = projectService.getProjectBySlugAndTheme(slug);
                 return WebResponse.<ProjectResponse>builder()
                                 .message("success")
@@ -163,6 +164,24 @@ public class ProjectController {
                         throw new RuntimeException("Failed to parse project request", e);
                 }
         }
+
+        @DeleteMapping(path = "project/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<WebResponse<String>> delete(
+                        @RequestParam String id) {
+                try {
+                        String deleteProject = projectService.deleteProject(id);
+                        WebResponse<String> response = WebResponse.<String>builder()
+                                        .code("00")
+                                        .message("success")
+                                        .result(deleteProject)
+                                        .build();
+                        return ResponseEntity.ok(response);
+                } catch (Exception e) {
+                        WebResponse<String> response = WebResponse.<String>builder()
+                                        .code("55")
+                                        .messageError(e.toString())
+                                        .build();
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                }
+        }
 }
-
-

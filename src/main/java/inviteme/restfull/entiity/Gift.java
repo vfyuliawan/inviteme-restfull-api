@@ -2,6 +2,7 @@ package inviteme.restfull.entiity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -29,7 +30,7 @@ public class Gift {
     @JoinColumn(name = "id_project", referencedColumnName = "id_project")
     private Projects project;
 
-    @OneToMany(mappedBy = "gift")
+    @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Gifts> gifts;
 
     @Column(name = "is_show")
