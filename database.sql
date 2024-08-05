@@ -274,6 +274,27 @@ SELECT * FROM gifts
 DESC gifts
 
 
+CREATE TABLE message (
+	id_message VARCHAR(255) PRIMARY KEY,
+    id_project VARCHAR(255) NOT NULL,
+    FOREIGN KEY fk_projects_message (id_project) REFERENCES projects(id_project)
+) ENGINE=InnoDB;
+
+
+SELECT * FROM message;
+
+DESC message;
+
+CREATE TABLE messages (
+    id VARCHAR(255) PRIMARY KEY,
+    id_message VARCHAR(255),
+    name VARCHAR(255),
+    text VARCHAR(255)
+    CONSTRAINT fk_message_project FOREIGN KEY (id_message) REFERENCES message_project(id_message)
+)ENGINE InnoDB;
+
+
+
 
 -- ////////////////////////////////////////////////////////////////////////
 
