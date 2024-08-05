@@ -7,24 +7,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+// import com.fasterxml.jackson.databind.ObjectMapper;
+
 import inviteme.restfull.model.request.GetMessageRequest;
 import inviteme.restfull.model.request.MessagePostRequest;
 import inviteme.restfull.model.response.MessageProjectResponse;
+import inviteme.restfull.model.response.MessagesResponse;
 import inviteme.restfull.model.response.WebResponse;
 import inviteme.restfull.service.MessageService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/v1/message")
 
 public class MessageController {
 
     @Autowired
     private MessageService messageService;
+
+    // @Autowired
+    // private ObjectMapper objectMapper;
 
     @GetMapping(path = "/getByProjectId", produces = MediaType.APPLICATION_JSON_VALUE)
     public WebResponse<MessageProjectResponse> getCurrentUser(@RequestParam String projectId) {
@@ -62,16 +70,19 @@ public class MessageController {
 
     }
 
-
-    @PostMapping(path = "/postMessage", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public WebResponse<Boolean> postMessage(@RequestParam String projectId, @RequestBody MessagePostRequest message) {
-        Boolean messageProjectResponse = messageService.postMessage(projectId, message);
-        return WebResponse.<Boolean>builder()
-        .result(messageProjectResponse)
-        .code("00")
-        .message("Success")
-        .build();
-
+    @PostMapping(path = "/postMessage", 
+    produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public WebResponse<MessagesResponse> postMessage(
+        @RequestParam String idProject,
+            @RequestBody MessagePostRequest messageRequest) {
+        log.info("Received raw request: {}", messageRequest);
+        MessagesResponse messageProjectResponse = messageService.postMessage(idProject,
+                messageRequest);
+        return WebResponse.<MessagesResponse>builder()
+                .result(messageProjectResponse)
+                .code("00")
+                .message("Success")
+                .build();
     }
 
 }

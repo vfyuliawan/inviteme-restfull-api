@@ -22,8 +22,8 @@ public class Messages {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "id_message", referencedColumnName = "id_message")
-    private Message message;
+    @JoinColumn(name = "id_project", referencedColumnName = "id_project")
+    private Projects project;
 
     @Column(name = "name")
     private String name;
