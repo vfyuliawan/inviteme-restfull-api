@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import inviteme.restfull.entiity.Messages;
 import inviteme.restfull.entiity.Projects;
+import java.time.*;
 import inviteme.restfull.model.request.GetMessageRequest;
 import inviteme.restfull.model.request.MessagePostRequest;
 import inviteme.restfull.model.response.MessageProjectResponse;
@@ -36,7 +37,7 @@ public class MessageService {
     public MessageProjectResponse getMessage(GetMessageRequest request) {
         validationService.validated(request);
         Projects projects = projectRepository.findById(request.getIdProjects()).orElseThrow();
-        List<Messages> listMessages = messagesRepository.findByProject(projects);
+        List<Messages> listMessages = messagesRepository.findByProjectOrderByCreateDateDesc(projects);
 
         if (listMessages.size() < 1) {
             return MessageProjectResponse.builder()
@@ -48,6 +49,7 @@ public class MessageService {
             .name(item.getName())
             .messageId(item.getId())
             .text(item.getText())
+            .time(item.getCreateDate())
             .present(item.getPresent())
             .build()).collect(Collectors.toList());
 
@@ -83,6 +85,7 @@ public MessagesResponse postMessage(String projectId, MessagePostRequest request
     Messages messages = new Messages();
     messages.setId(UUID.randomUUID().toString());
     messages.setProject(projectById);
+    messages.setCreateDate(LocalDateTime.now()); 
     messages.setText(request.getText());
     messages.setName(request.getName());
     messages.setPresent(request.getPresent());
@@ -92,6 +95,7 @@ public MessagesResponse postMessage(String projectId, MessagePostRequest request
             .messageId(savedMessage.getId())
             .name(savedMessage.getName())
             .text(savedMessage.getText())
+            .time(savedMessage.getCreateDate())
             .present(savedMessage.getPresent())
             .build();
 }

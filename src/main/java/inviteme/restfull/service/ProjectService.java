@@ -820,7 +820,7 @@ public class ProjectService {
         @Transactional(readOnly = true)
         public ProjectInquiryResponse getMyProject(ProjectInquiryRequest request) {
                 User userLogin = getUserService.getUserLogin();
-                Page<Projects> projectPage = projectRepository.findByUser(userLogin,
+                Page<Projects> projectPage = projectRepository.findByTitleContainingAndUser(request.getTitle(), userLogin,
                                 PageRequest.of(request.getCurrentPage(), request.getSize()));
                 List<GetProjectResponse> listProject = projectPage.getContent().stream().map(item -> {
                         ThemeResponse themeResponse = new ThemeResponse();

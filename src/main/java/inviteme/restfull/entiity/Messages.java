@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
 import lombok.Setter;
 
 @Setter
@@ -33,5 +35,8 @@ public class Messages {
 
     @Column(name = "present")
     private String present;
+
+    @Column(name = "create_date")
+    private LocalDateTime createDate;
 
 }

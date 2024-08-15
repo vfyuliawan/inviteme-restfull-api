@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -16,4 +17,5 @@ public class MessagesResponse {
     private String name;
     private String text;
     private String present;
+    private LocalDateTime time;
 }

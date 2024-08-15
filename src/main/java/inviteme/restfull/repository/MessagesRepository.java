@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public interface MessagesRepository extends JpaRepository<Messages, String>{
-    List<Messages> findByProject(Projects project);
+    List<Messages> findByProjectOrderByCreateDateDesc(Projects project);
     
 } 
 
