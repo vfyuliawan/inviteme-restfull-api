@@ -1,5 +1,5 @@
 FROM openjdk:17-jdk-slim
 WORKDIR /opt/app
 COPY target/inviteme-restfull-api-0.0.1-SNAPSHOT.jar invitemerestfullapi.jar
-EXPOSE 8080
+EXPOSE 8000
 ENTRYPOINT exec java -jar invitemerestfullapi.jar

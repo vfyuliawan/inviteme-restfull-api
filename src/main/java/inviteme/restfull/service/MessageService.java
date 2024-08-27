@@ -36,7 +36,7 @@ public class MessageService {
     @Transactional(readOnly = true)
     public MessageProjectResponse getMessage(GetMessageRequest request) {
         validationService.validated(request);
-        Projects projects = projectRepository.findById(request.getIdProjects()).orElseThrow();
+        Projects projects = projectRepository.findById(request.getIdProjects()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Id Tidak Ditemukan"));
         List<Messages> listMessages = messagesRepository.findByProjectOrderByCreateDateDesc(projects);
 
         if (listMessages.size() < 1) {
