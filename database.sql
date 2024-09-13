@@ -31,6 +31,7 @@ ALTER TABLE users
 ADD COLUMN photo LONGTEXT;
 
 
+
 SELECT * FROM users
 
 DESC users

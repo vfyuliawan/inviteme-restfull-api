@@ -68,6 +68,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.List;
+import java.time.LocalDateTime;
+
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -414,10 +416,11 @@ public class ProjectService {
                 // Create and save Projects entity
                 Projects projects = new Projects();
                 projects.setId(UUID.randomUUID().toString());
+                projects.setPublishDate(LocalDateTime.now());
                 projects.setUser(user);
                 projects.setTitle(request.getTitle());
                 projects.setCountdown(request.getCountdown());
-                projects.setHero(null); // initially set to null
+                projects.setHero(null);
                 projectRepository.save(projects);
 
                 // Create and save entity
@@ -758,6 +761,7 @@ public class ProjectService {
                 return ProjectResponse.builder()
                                 .title(projects.getTitle() != null ? projects.getTitle() : "")
                                 .countdown(projects.getCountdown())
+                                .publishDate(projects.getPublishDate())
                                 .hero(heroResponse != null ? heroResponse : null)
                                 .home(homeResponse != null ? homeResponse : null)
                                 .cover(coverResponse != null ? coverResponse : null)
@@ -778,7 +782,7 @@ public class ProjectService {
                 validationService.validated(request);
 
                 if (request.getTitle() == null || request.getTitle().isEmpty()) {
-                        projectPage = projectRepository.findByUser(
+                        projectPage = projectRepository.findByUserOrderByPublishDateDesc(
                                         user, PageRequest.of(request.getCurrentPage(), request.getSize()));
                 } else {
                         projectPage = projectRepository.findByTitleContainingAndUser(
@@ -799,6 +803,7 @@ public class ProjectService {
                                         .id(item.getId())
                                         .username(item.getUser().getUsername())
                                         .date(item.getCountdown())
+                                        .publishDate(item.getPublishDate())
                                         .theme(themeResponse)
                                         .build();
                 }).collect(Collectors.toList());
@@ -834,6 +839,7 @@ public class ProjectService {
                                         .title(item.getTitle())
                                         .id(item.getId())
                                         .username(item.getUser().getUsername())
+                                        .publishDate(item.getPublishDate())
                                         .date(item.getCountdown())
                                         .theme(themeResponse)
                                         .build();

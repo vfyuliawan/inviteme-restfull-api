@@ -16,6 +16,7 @@ public class ProjectResponse {
 
     private String title;
     private LocalDateTime countdown;
+    private LocalDateTime publishDate;
     private HeroResponse hero;
     private HomeResponse home;
     private CoverResponse cover;

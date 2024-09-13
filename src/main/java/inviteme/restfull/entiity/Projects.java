@@ -41,6 +41,9 @@ public class Projects {
     @Column(name = "countdown")
     private LocalDateTime countdown;
 
+    @Column(name = "publish_date")
+    private LocalDateTime publishDate;
+
     @OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Hero hero;
 

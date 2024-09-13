@@ -18,5 +18,6 @@ public class GetProjectResponse {
     private String username;
     private String title;
     private LocalDateTime date;
+    private LocalDateTime publishDate;
     private ThemeResponse theme;
 }
