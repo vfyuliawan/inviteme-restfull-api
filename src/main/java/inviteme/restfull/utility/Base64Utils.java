@@ -1,6 +1,7 @@
 package inviteme.restfull.utility;
 import java.util.Base64;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,7 +13,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import inviteme.restfull.enumiration.ApiEnum;
+import inviteme.restfull.model.response.GetImageStorage;
+import inviteme.restfull.model.response.ResponseImageStorage;
 import inviteme.restfull.service.Base64MultipartFile;
 
 import java.io.IOException;
@@ -22,6 +27,9 @@ import java.time.LocalDateTime;
 
 @Service
 public class Base64Utils {
+
+    @Autowired
+    ObjectMapper objectMapper;
 
 
    public byte[] decodeBase64String(String base64String){
@@ -51,14 +59,15 @@ public class Base64Utils {
         return new Base64MultipartFile(bytes, header, username);
     }
 
-     public String uploadImage(MultipartFile image, String username) throws IOException {
+     public ResponseImageStorage uploadImage(MultipartFile image, String username) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("fileToUpload", image.getResource());
+        var fileUpload = image.getResource();
+        body.add("fileToUpload",fileUpload);
         body.add("username", username);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
@@ -70,7 +79,7 @@ public class Base64Utils {
                 String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            return "File uploaded successfully!";
+            return objectMapper.readValue(response.getBody(), ResponseImageStorage.class);
         } else {
             throw new RuntimeException("Failed to upload the file. Status code: " + response.getStatusCode());
         }

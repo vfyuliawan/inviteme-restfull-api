@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import inviteme.restfull.entiity.User;
 import inviteme.restfull.enumiration.ApiEnum;
 import inviteme.restfull.model.response.GetImageStorage;
+import inviteme.restfull.model.response.ResponseImageStorage;
 import inviteme.restfull.utility.Base64Utils;
 import inviteme.restfull.utility.FileMultipartFile;
 import lombok.extern.slf4j.Slf4j;
@@ -99,9 +100,10 @@ public class ImageUploadService {
     public GetImageStorage uploadImagetoStorage(String base64String) throws IOException {
         User user = getUserService.getUserLogin();
         MultipartFile thisImage = base64Utils.base64toFile3(base64String, user.getUsername());;
-        String message = base64Utils.uploadImage(thisImage, user.getUsername());
-        String fileDir = "image/"+user.getUsername()+"/"+thisImage.getOriginalFilename();
-        return GetImageStorage.builder().file(thisImage).fileDir(fileDir).imageUrl(ApiEnum.getURLStorage()+fileDir).message(message).build();
+        ResponseImageStorage responseUpload = base64Utils.uploadImage(thisImage, user.getUsername());
+        String filename = responseUpload.getMessage().split(" ")[2];
+        String fileDir = "image/"+user.getUsername()+"/"+filename;
+        return GetImageStorage.builder().file(thisImage).fileDir(fileDir).imageUrl(ApiEnum.getURLStorage()+fileDir).message(responseUpload.getMessage()).build();
     }
 
 }

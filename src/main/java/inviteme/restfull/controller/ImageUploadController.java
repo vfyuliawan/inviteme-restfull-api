@@ -22,8 +22,8 @@ public class ImageUploadController {
     public ResponseEntity<WebResponse<String>> uploadImage(@RequestBody String file) {
         try {
             GetImageStorage uploadImagetoStorage = imageUploadService.uploadImagetoStorage(file);
-            var response = WebResponse.<String>builder().code("00").message("success")
-                    .result(uploadImagetoStorage.getMessage()).build();
+            WebResponse<String> response = WebResponse.<String>builder().code("00").message(uploadImagetoStorage.getMessage())
+                    .result(uploadImagetoStorage.getImageUrl()).build();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             WebResponse<String> errorResponse = WebResponse.<String>builder()
