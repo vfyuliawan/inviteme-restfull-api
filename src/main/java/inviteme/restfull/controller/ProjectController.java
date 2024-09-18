@@ -3,9 +3,7 @@ package inviteme.restfull.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -114,45 +112,68 @@ public class ProjectController {
                         @RequestParam int currentPage,
                         @RequestParam int size,
                         @RequestParam(required = false) String title) {
-                ProjectInquiryRequest projectRequest = new ProjectInquiryRequest();
-                projectRequest.setTitle(title != null ? title : "");
-                projectRequest.setCurrentPage(currentPage);
-                projectRequest.setSize(size);
+                try {
+                        ProjectInquiryRequest projectRequest = new ProjectInquiryRequest();
+                        projectRequest.setTitle(title != null ? title : "");
+                        projectRequest.setCurrentPage(currentPage);
+                        projectRequest.setSize(size);
 
-                ProjectInquiryResponse projectInquiry = projectService.getMyProject(projectRequest);
-                return WebResponse.<ProjectInquiryResponse>builder()
-                                .message("success")
-                                .code("00")
-                                .result(projectInquiry)
-                                .build();
+                        ProjectInquiryResponse projectInquiry = projectService.getMyProject(projectRequest);
+                        return WebResponse.<ProjectInquiryResponse>builder()
+                                        .message("success")
+                                        .code("00")
+                                        .result(projectInquiry)
+                                        .build();
+                } catch (Exception e) {
+                        return WebResponse.<ProjectInquiryResponse>builder().code("11").message("error")
+                                        .messageError(e.toString()).build();
+                }
+
         }
 
         @GetMapping(path = "/project/get")
         public WebResponse<ProjectResponse> getProjectById(
                         @RequestParam String id) {
-                ProjectResponse projectResponse = projectService.getProjectById(id);
-                return WebResponse.<ProjectResponse>builder()
-                                .message("success")
-                                .code("00")
-                                .result(projectResponse)
-                                .build();
+
+                try {
+                        ProjectResponse projectResponse = projectService.getProjectById(id);
+                        return WebResponse.<ProjectResponse>builder()
+                                        .message("success")
+                                        .code("00")
+                                        .result(projectResponse)
+                                        .build();
+                } catch (Exception e) {
+                        return WebResponse.<ProjectResponse>builder().code("11").messageError(e.toString())
+                                        .message("error").build();
+                }
+
         }
 
         @GetMapping(path = "/project/getBySlug")
         public WebResponse<ProjectResponse> getProjectBySlugAndTheme(
-                        @RequestParam String slug) {
-                ProjectResponse projectResponse = projectService.getProjectBySlugAndTheme(slug);
-                return WebResponse.<ProjectResponse>builder()
-                                .message("success")
-                                .code("00")
-                                .result(projectResponse)
-                                .build();
+                        @RequestParam String slug) throws IOException {
+                try {
+                        ProjectResponse projectResponse = projectService.getProjectBySlugAndTheme(slug);
+                        return WebResponse.<ProjectResponse>builder()
+                                        .message("success")
+                                        .code("00")
+                                        .result(projectResponse)
+                                        .build();
+
+                } catch (Exception e) {
+                        return WebResponse.<ProjectResponse>builder()
+                                        .message("error")
+                                        .messageError(e.toString())
+                                        .code("00")
+                                        .build();
+                }
+
         }
 
         @PatchMapping(path = "/project/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         public WebResponse<ProjectResponse> update(
                         @RequestBody ProjectRequest projectRequest,
-                        @RequestParam String idProject) {
+                        @RequestParam String idProject) throws IOException {
                 try {
                         ProjectResponse projectResponse = projectService.updateProject(idProject, projectRequest);
                         return WebResponse.<ProjectResponse>builder()
@@ -161,12 +182,16 @@ public class ProjectController {
                                         .result(projectResponse)
                                         .build();
                 } catch (IOException e) {
-                        throw new RuntimeException("Failed to parse project request", e);
+                        return WebResponse.<ProjectResponse>builder()
+                                        .message("Error")
+                                        .messageError(e.toString())
+                                        .code("11")
+                                        .build();
                 }
         }
 
         @DeleteMapping(path = "project/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<WebResponse<String>> delete(
+        public WebResponse<String> delete(
                         @RequestParam String id) {
                 try {
                         String deleteProject = projectService.deleteProject(id);
@@ -175,13 +200,13 @@ public class ProjectController {
                                         .message("success")
                                         .result(deleteProject)
                                         .build();
-                        return ResponseEntity.ok(response);
+                        return response;
                 } catch (Exception e) {
                         WebResponse<String> response = WebResponse.<String>builder()
                                         .code("55")
-                                        .messageError(e.toString())
+                                        .messageError(e.getMessage())
                                         .build();
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+                        return response;
                 }
         }
 }

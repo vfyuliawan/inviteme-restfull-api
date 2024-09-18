@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface ProjectRepositry extends JpaRepository<Projects, String> {
 
-        Page<Projects> findByTitleContainingAndUser(String title, User user, Pageable pageable);
+        Page<Projects> findByTitleContainingAndUserOrderByPublishDateDesc(String title, User user, Pageable pageable);
 
         Page<Projects> findByUserOrderByPublishDateDesc(User user, Pageable pageable);
 

@@ -22,6 +22,7 @@ import inviteme.restfull.model.request.ProjectRequest.GiftRequest;
 import inviteme.restfull.model.request.ProjectRequest.GiftsRequest;
 import inviteme.restfull.model.request.ProjectRequest.StoriestRequest;
 import inviteme.restfull.model.request.ProjectRequest.StoryRequest;
+import inviteme.restfull.model.response.GetImageStorage;
 import inviteme.restfull.model.response.GetProjectResponse;
 import inviteme.restfull.model.response.PagingResponse;
 import inviteme.restfull.model.response.ProjectInquiryResponse;
@@ -123,6 +124,9 @@ public class ProjectService {
         @Autowired
         private GiftsRepository giftsRepository;
 
+        @Autowired
+        private ImageUploadService imageUploadService;
+
         @Transactional
         public ProjectResponse createProject(
                         ProjectRequest request,
@@ -142,7 +146,6 @@ public class ProjectService {
                 projects.setId(UUID.randomUUID().toString());
                 projects.setUser(user);
                 projects.setTitle(request.getTitle());
-                projects.setHero(null); // initially set to null
                 projectRepository.save(projects);
 
                 // Create and save Hero entity
@@ -420,7 +423,6 @@ public class ProjectService {
                 projects.setUser(user);
                 projects.setTitle(request.getTitle());
                 projects.setCountdown(request.getCountdown());
-                projects.setHero(null);
                 projectRepository.save(projects);
 
                 // Create and save entity
@@ -457,9 +459,9 @@ public class ProjectService {
                 hero.setProject(projects);
                 hero.setDate(request.getCountdown());
                 hero.setIsShow(request.getHero().getIsShow());
-                hero.setImg(request.getHero().getImg());
+                GetImageStorage heroImage = imageUploadService.uploadImagetoStorage(request.getHero().getImg());
+                hero.setImg(heroImage.getImageUrl());
                 heroRepository.save(hero);
-
                 return hero;
         }
 
@@ -471,9 +473,9 @@ public class ProjectService {
                 home.setQuotes(request.getHome().getQuotes());
                 home.setProject(projects);
                 home.setIsShow(request.getHome().getIsShow());
-                home.setImg(request.getHome().getImg());
+                GetImageStorage homeImage = imageUploadService.uploadImagetoStorage(request.getHome().getImg());
+                home.setImg(homeImage.getImageUrl());
                 homeRepository.save(home);
-
                 return home;
         }
 
@@ -485,9 +487,9 @@ public class ProjectService {
                 cover.setId(UUID.randomUUID().toString());
                 cover.setIsShow(request.getCover().getIsShow());
                 cover.setProject(projects);
-                cover.setImg(request.getCover().getImg());
+                GetImageStorage coverImage = imageUploadService.uploadImagetoStorage(request.getCover().getImg());
+                cover.setImg(coverImage.getImageUrl());
                 coverRepository.save(cover);
-
                 return cover;
 
         }
@@ -520,13 +522,17 @@ public class ProjectService {
                 acara.setLokasiAkad(request.getInfoAcara().getAkad().getLokasiAkad());
                 acara.setMapAkad(request.getInfoAcara().getAkad().getMapAkad());
                 acara.setDateAkad(request.getInfoAcara().getAkad().getDateAkad());
-                acara.setImgAkad(request.getInfoAcara().getAkad().getImgAkad());
+                GetImageStorage akadImage = imageUploadService
+                                .uploadImagetoStorage(request.getInfoAcara().getAkad().getImgAkad());
+                acara.setImgAkad(akadImage.getImageUrl());
 
                 acara.setTitleResepsi(request.getInfoAcara().getResepsi().getTitleResepsi());
                 acara.setLokasiResepsi(request.getInfoAcara().getResepsi().getLokasiResepsi());
                 acara.setMapResepsi(request.getInfoAcara().getResepsi().getMapResepsi());
                 acara.setDateResepsi(request.getInfoAcara().getResepsi().getDateResepsi());
-                acara.setImgResepsi(request.getInfoAcara().getResepsi().getImgResepsi());
+                GetImageStorage resepsiImage = imageUploadService
+                                .uploadImagetoStorage(request.getInfoAcara().getResepsi().getImgResepsi());
+                acara.setImgResepsi(resepsiImage.getImageUrl());
                 Acara save = infoAcaraRepository.save(acara);
                 return save;
         }
@@ -546,12 +552,16 @@ public class ProjectService {
                 braidInfo.setMaleName(request.getBraidInfo().getMale().getName());
                 braidInfo.setMaleMom(request.getBraidInfo().getMale().getMom());
                 braidInfo.setMaleDad(request.getBraidInfo().getMale().getDad());
-                braidInfo.setMaleImg(request.getBraidInfo().getMale().getPhoto());
+                GetImageStorage malePhoto = imageUploadService
+                                .uploadImagetoStorage(request.getBraidInfo().getMale().getPhoto());
+                braidInfo.setMaleImg(malePhoto.getImageUrl());
 
                 braidInfo.setFemaleName(request.getBraidInfo().getFemale().getName());
                 braidInfo.setFemaleMom(request.getBraidInfo().getFemale().getMom());
                 braidInfo.setFemaleDad(request.getBraidInfo().getFemale().getDad());
-                braidInfo.setFemaleImg(request.getBraidInfo().getFemale().getPhoto());
+                GetImageStorage femaleImage = imageUploadService
+                                .uploadImagetoStorage(request.getBraidInfo().getFemale().getPhoto());
+                braidInfo.setFemaleImg(femaleImage.getImageUrl());
 
                 BraidInfo save = braidInfoRepository.save(braidInfo);
                 return save;
@@ -576,7 +586,15 @@ public class ProjectService {
                         stories.setStory(savedStory);
                         stories.setTitle(item.getTitle());
                         stories.setText(item.getText());
-                        stories.setImg(item.getImage());
+                        try {
+                                GetImageStorage listStoryImage = imageUploadService
+                                                .uploadImagetoStorage(item.getImage());
+                                stories.setImg(listStoryImage.getImageUrl());
+                        } catch (Exception e) {
+                                stories.setImg("");
+                                throw new RuntimeException(e.toString());
+
+                        }
                         stories.setDate(item.getDate());
                         return stories;
                 }).collect(Collectors.toList());
@@ -606,7 +624,13 @@ public class ProjectService {
                         Galeries galeries = new Galeries();
                         galeries.setId(UUID.randomUUID().toString());
                         galeries.setGalery(savedGalery);
-                        galeries.setImg(item);
+                        try {
+                                GetImageStorage itemGaleryImage = imageUploadService.uploadImagetoStorage(item);
+                                galeries.setImg(itemGaleryImage.getImageUrl());
+                        } catch (Exception e) {
+                                galeries.setImg("");
+                                throw new RuntimeException(e.toString());
+                        }
                         return galeries;
                 }).collect(Collectors.toList());
 
@@ -785,7 +809,7 @@ public class ProjectService {
                         projectPage = projectRepository.findByUserOrderByPublishDateDesc(
                                         user, PageRequest.of(request.getCurrentPage(), request.getSize()));
                 } else {
-                        projectPage = projectRepository.findByTitleContainingAndUser(
+                        projectPage = projectRepository.findByTitleContainingAndUserOrderByPublishDateDesc(
                                         request.getTitle(), user,
                                         PageRequest.of(request.getCurrentPage(), request.getSize()));
                 }
@@ -824,94 +848,116 @@ public class ProjectService {
 
         @Transactional(readOnly = true)
         public ProjectInquiryResponse getMyProject(ProjectInquiryRequest request) {
-                User userLogin = getUserService.getUserLogin();
-                Page<Projects> projectPage = projectRepository.findByTitleContainingAndUser(request.getTitle(), userLogin,
-                                PageRequest.of(request.getCurrentPage(), request.getSize()));
-                List<GetProjectResponse> listProject = projectPage.getContent().stream().map(item -> {
-                        ThemeResponse themeResponse = new ThemeResponse();
-                        themeResponse.setAlamat(item.getTheme().getAlamat());
-                        themeResponse.setEmbeded(item.getTheme().getEmbeded());
-                        themeResponse.setMusic(item.getTheme().getMusic());
-                        themeResponse.setSlug(item.getTheme().getSlug());
-                        themeResponse.setTheme(item.getTheme().getTheme());
 
-                        return GetProjectResponse.builder()
-                                        .title(item.getTitle())
-                                        .id(item.getId())
-                                        .username(item.getUser().getUsername())
-                                        .publishDate(item.getPublishDate())
-                                        .date(item.getCountdown())
-                                        .theme(themeResponse)
+                try {
+                        User userLogin = getUserService.getUserLogin();
+
+                        Page<Projects> projectPage = projectRepository
+                                        .findByTitleContainingAndUserOrderByPublishDateDesc(request.getTitle(),
+                                                        userLogin,
+                                                        PageRequest.of(request.getCurrentPage(), request.getSize()));
+                        List<GetProjectResponse> listProject = projectPage.getContent().stream().map(item -> {
+                                ThemeResponse themeResponse = new ThemeResponse();
+                                themeResponse.setAlamat(item.getTheme().getAlamat());
+                                themeResponse.setEmbeded(item.getTheme().getEmbeded());
+                                themeResponse.setMusic(item.getTheme().getMusic());
+                                themeResponse.setSlug(item.getTheme().getSlug());
+                                themeResponse.setTheme(item.getTheme().getTheme());
+
+                                return GetProjectResponse.builder()
+                                                .title(item.getTitle())
+                                                .id(item.getId())
+                                                .username(item.getUser().getUsername())
+                                                .publishDate(item.getPublishDate())
+                                                .date(item.getCountdown())
+                                                .theme(themeResponse)
+                                                .build();
+                        }).collect(Collectors.toList());
+
+                        PagingResponse pagingResponse = PagingResponse.builder()
+                                        .currentPage(projectPage.getNumber())
+                                        .size(projectPage.getSize())
+                                        .totalPage(projectPage.getTotalPages())
                                         .build();
-                }).collect(Collectors.toList());
 
-                // Create the paging response
-                PagingResponse pagingResponse = PagingResponse.builder()
-                                .currentPage(projectPage.getNumber())
-                                .size(projectPage.getSize())
-                                .totalPage(projectPage.getTotalPages())
-                                .build();
+                        // Create the final response
+                        return ProjectInquiryResponse.builder()
+                                        .paging(pagingResponse)
+                                        .projects(listProject)
+                                        .build();
+                } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                }
 
-                // Create the final response
-                return ProjectInquiryResponse.builder()
-                                .paging(pagingResponse)
-                                .projects(listProject)
-                                .build();
         }
 
         @Transactional(readOnly = true)
         public ProjectResponse getProjectById(String id) {
-                Projects project = projectRepository.findById(id).orElseThrow(
-                                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
-                return toNewProjectResponse(project);
-
+                try {
+                        Projects project = projectRepository.findById(id).orElseThrow(
+                                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found"));
+                        return toNewProjectResponse(project);
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
         }
 
         @Transactional(readOnly = true)
         public ProjectResponse getProjectBySlugAndTheme(String slug) {
-                Projects project = projectRepository.findByThemeSlug(slug).orElseThrow(
-                                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
-                return toNewProjectResponse(project);
+                try {
+                        Projects project = projectRepository.findByThemeSlug(slug).orElseThrow(
+                                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
+                        return toNewProjectResponse(project);
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
 
         }
 
         public ProjectResponse updateProject(
                         String projectId,
                         ProjectRequest request) throws IOException {
-                validationService.validated(request);
-                User user = getUserService.getUserLogin();
+                try {
+                        validationService.validated(request);
+                        User user = getUserService.getUserLogin();
 
-                Projects projects = projectRepository.findById(projectId)
-                                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
-                if (!projects.getUser().getUsername().equals(user.getUsername())) {
-                        throw new SecurityException("User not authorized to update this project");
+                        Projects projects = projectRepository.findById(projectId)
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                        "Project Id Not Found"));
+                        if (!projects.getUser().getToken().equals(user.getToken())) {
+                                throw new SecurityException("User not authorized to update this project");
+                        }
+                        projects.setTitle(request.getTitle());
+                        projects.setCountdown(request.getCountdown());
+
+                        Hero hero = updateHero(projects, request);
+                        Home home = updateHome(projects, request);
+                        Cover cover = updateCover(projects, request);
+                        Theme theme = updateTheme(projects, request);
+                        Acara acara = updateAcara(projects, request);
+                        BraidInfo braidInfo = updateBraidInfo(projects, request);
+                        Story story = updateStory(projects, request);
+                        Galery galery = updateGalery(projects, request);
+                        Gift gift = updateGift(projects, request);
+
+                        // Update Projects entity with the updated references
+                        projects.setHero(hero);
+                        projects.setHome(home);
+                        projects.setCover(cover);
+                        projects.setTheme(theme);
+                        projects.setAcara(acara);
+                        projects.setBraidInfo(braidInfo);
+                        projects.setStory(story);
+                        projects.setGalery(galery);
+                        projects.setGift(gift);
+                        projectRepository.save(projects);
+
+                        return toNewProjectResponse(projects);
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
                 }
-                projects.setTitle(request.getTitle());
-                projects.setCountdown(request.getCountdown());
 
-                Hero hero = updateHero(projects, request);
-                Home home = updateHome(projects, request);
-                Cover cover = updateCover(projects, request);
-                Theme theme = updateTheme(projects, request);
-                Acara acara = updateAcara(projects, request);
-                BraidInfo braidInfo = updateBraidInfo(projects, request);
-                Story story = updateStory(projects, request);
-                Galery galery = updateGalery(projects, request);
-                Gift gift = updateGift(projects, request);
-
-                // Update Projects entity with the updated references
-                projects.setHero(hero);
-                projects.setHome(home);
-                projects.setCover(cover);
-                projects.setTheme(theme);
-                projects.setAcara(acara);
-                projects.setBraidInfo(braidInfo);
-                projects.setStory(story);
-                projects.setGalery(galery);
-                projects.setGift(gift);
-                projectRepository.save(projects);
-
-                return toNewProjectResponse(projects);
         }
 
         private Hero updateHero(Projects projects, ProjectRequest request) {
@@ -1195,12 +1241,17 @@ public class ProjectService {
         }
 
         public String deleteProject(String id) throws Exception {
-                if (projectRepository.existsById(id)) {
-                        projectRepository.deleteById(id);
-                        return "Success";
-                } else {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "id not found");
+                try {
+                        if (projectRepository.existsById(id)) {
+                                projectRepository.deleteById(id);
+                                return "Success";
+                        } else {
+                                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "id not found");
+                        }
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
                 }
+
         }
 
 }
