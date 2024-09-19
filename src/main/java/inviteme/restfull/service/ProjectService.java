@@ -960,22 +960,36 @@ public class ProjectService {
 
         }
 
-        private Hero updateHero(Projects projects, ProjectRequest request) {
+        private Hero updateHero(Projects projects, ProjectRequest request) throws IOException {
                 Hero hero = heroRepository.findByProject(projects).orElseThrow(null);
                 if (Objects.nonNull(request.getHero().getIsShow())) {
                         hero.setIsShow(request.getHero().getIsShow());
                 }
                 if (Objects.nonNull(request.getHero().getImg())) {
-                        hero.setImg(request.getHero().getImg());
+                        if (request.getHero().getImg().contains("https")) {
+                                hero.setImg(request.getHero().getImg());
+                        } else {
+                                imageUploadService.deleteImageStorage(hero.getImg());
+                                GetImageStorage heroUpdateImage = imageUploadService
+                                                .uploadImagetoStorage(request.getHero().getImg());
+                                hero.setImg(heroUpdateImage.getImageUrl());
+                        }
                 }
                 Hero save = heroRepository.save(hero);
                 return save;
         }
 
-        private Home updateHome(Projects projects, ProjectRequest request) {
+        private Home updateHome(Projects projects, ProjectRequest request) throws IOException {
                 Home home = homeRepository.findByProject(projects).orElseThrow(null);
                 if (Objects.nonNull(request.getHome().getImg())) {
-                        home.setImg(request.getHome().getImg());
+                        if (request.getHome().getImg().contains("https")) {
+                                home.setImg(request.getHome().getImg());
+                        } else {
+                                imageUploadService.deleteImageStorage(home.getImg());
+                                GetImageStorage homeUpdateImage = imageUploadService
+                                                .uploadImagetoStorage(request.getHome().getImg());
+                                home.setImg(homeUpdateImage.getImageUrl());
+                        }
                 }
                 if (Objects.nonNull(request.getHome().getIsShow())) {
                         home.setIsShow(request.getHome().getIsShow());
@@ -987,10 +1001,17 @@ public class ProjectService {
                 return save;
         }
 
-        private Cover updateCover(Projects projects, ProjectRequest request) {
+        private Cover updateCover(Projects projects, ProjectRequest request) throws IOException {
                 Cover cover = coverRepository.findByProject(projects).orElseThrow(null);
                 if (Objects.nonNull(request.getCover().getImg())) {
-                        cover.setImg(request.getCover().getImg());
+                        if (request.getCover().getImg().contains("https")) {
+                                cover.setImg(request.getCover().getImg());
+                        } else {
+                                imageUploadService.deleteImageStorage(cover.getImg());
+                                GetImageStorage udateImageCover = imageUploadService
+                                                .uploadImagetoStorage(request.getHome().getImg());
+                                cover.setImg(udateImageCover.getImageUrl());
+                        }
                 }
                 if (Objects.nonNull(request.getCover().getIsShow())) {
                         cover.setIsShow(request.getCover().getIsShow());
@@ -1021,7 +1042,7 @@ public class ProjectService {
                 return save;
         }
 
-        private Acara updateAcara(Projects projects, ProjectRequest request) {
+        private Acara updateAcara(Projects projects, ProjectRequest request) throws IOException {
                 Acara acara = infoAcaraRepository.findByProject(projects).orElseThrow(null);
                 if (Objects.nonNull(request.getInfoAcara().getAkad().getTitleAkad())) {
                         acara.setTitleAkad(request.getInfoAcara().getAkad().getTitleAkad());
@@ -1030,7 +1051,14 @@ public class ProjectService {
                         acara.setDateAkad(request.getInfoAcara().getAkad().getDateAkad());
                 }
                 if (Objects.nonNull(request.getInfoAcara().getAkad().getImgAkad())) {
-                        acara.setImgAkad(request.getInfoAcara().getAkad().getImgAkad());
+                        if (request.getInfoAcara().getAkad().getImgAkad().contains("https")) {
+                                acara.setImgAkad(request.getInfoAcara().getAkad().getImgAkad());
+                        } else {
+                                imageUploadService.deleteImageStorage(acara.getImgAkad());
+                                GetImageStorage uploadAcaraImage = imageUploadService
+                                                .uploadImagetoStorage(request.getInfoAcara().getAkad().getImgAkad());
+                                acara.setImgAkad(uploadAcaraImage.getImageUrl());
+                        }
                 }
                 if (Objects.nonNull(request.getInfoAcara().getAkad().getMapAkad())) {
                         acara.setMapAkad(request.getInfoAcara().getAkad().getMapAkad());
@@ -1046,7 +1074,14 @@ public class ProjectService {
                         acara.setDateResepsi(request.getInfoAcara().getResepsi().getDateResepsi());
                 }
                 if (Objects.nonNull(request.getInfoAcara().getResepsi().getImgResepsi())) {
-                        acara.setImgResepsi(request.getInfoAcara().getResepsi().getImgResepsi());
+                        if (request.getInfoAcara().getResepsi().getImgResepsi().contains("https")) {
+                                acara.setImgResepsi(request.getInfoAcara().getResepsi().getImgResepsi());
+                        } else {
+                                imageUploadService.deleteImageStorage(acara.getImgResepsi());
+                                GetImageStorage uploaResepsiImage = imageUploadService.uploadImagetoStorage(
+                                                request.getInfoAcara().getResepsi().getImgResepsi());
+                                acara.setImgAkad(uploaResepsiImage.getImageUrl());
+                        }
                 }
                 if (Objects.nonNull(request.getInfoAcara().getResepsi().getMapResepsi())) {
                         acara.setMapResepsi(request.getInfoAcara().getResepsi().getMapResepsi());
@@ -1059,7 +1094,7 @@ public class ProjectService {
 
         }
 
-        private BraidInfo updateBraidInfo(Projects projects, ProjectRequest request) {
+        private BraidInfo updateBraidInfo(Projects projects, ProjectRequest request) throws IOException {
                 BraidInfo braidInfo = braidInfoRepository.findByProject(projects).orElseThrow(null);
                 if (Objects.nonNull(request.getBraidInfo().getIsShow())) {
                         braidInfo.setShow(request.getBraidInfo().getIsShow());
@@ -1074,7 +1109,14 @@ public class ProjectService {
                         braidInfo.setMaleName(request.getBraidInfo().getMale().getName());
                 }
                 if (Objects.nonNull(request.getBraidInfo().getMale().getPhoto())) {
-                        braidInfo.setMaleImg(request.getBraidInfo().getMale().getPhoto());
+                        if (request.getBraidInfo().getMale().getPhoto().contains("https")) {
+                                braidInfo.setMaleImg(request.getBraidInfo().getMale().getPhoto());
+                        } else {
+                                imageUploadService.deleteImageStorage(braidInfo.getMaleImg());
+                                GetImageStorage uploadMalePhoto = imageUploadService
+                                                .uploadImagetoStorage(request.getBraidInfo().getMale().getPhoto());
+                                braidInfo.setMaleImg(uploadMalePhoto.getImageUrl());
+                        }
                 }
 
                 if (Objects.nonNull(request.getBraidInfo().getFemale().getDad())) {
@@ -1087,114 +1129,146 @@ public class ProjectService {
                         braidInfo.setFemaleName(request.getBraidInfo().getFemale().getName());
                 }
                 if (Objects.nonNull(request.getBraidInfo().getFemale().getPhoto())) {
-                        braidInfo.setFemaleImg(request.getBraidInfo().getFemale().getPhoto());
+                        if (request.getBraidInfo().getFemale().getPhoto().contains("https")) {
+                                braidInfo.setFemaleImg(request.getBraidInfo().getFemale().getPhoto());
+                        } else {
+                                imageUploadService.deleteImageStorage(braidInfo.getFemaleImg());
+                                GetImageStorage uploadFeMalePhoto = imageUploadService
+                                                .uploadImagetoStorage(request.getBraidInfo().getFemale().getPhoto());
+                                braidInfo.setFemaleImg(uploadFeMalePhoto.getImageUrl());
+                        }
                 }
                 BraidInfo save = braidInfoRepository.save(braidInfo);
                 return save;
         }
 
-        private Story updateStory(Projects projects, ProjectRequest request) {
+        private Story updateStory(Projects projects, ProjectRequest request) throws IOException {
                 Story story = storyRepository.findByProject(projects)
-                                .orElseThrow(() -> new IllegalArgumentException("Story not found for the project"));
-                // Update Story fields
+                    .orElseThrow(() -> new IllegalArgumentException("Story not found for the project"));
                 if (Objects.nonNull(request.getStory().getIsShow())) {
-                        story.setShow(request.getStory().getIsShow());
+                    story.setShow(request.getStory().getIsShow());
                 }
-                // Update related Stories entities
                 List<Stories> existingStories = storiesRepository.findByStory(story);
                 StoryRequest storyRequest = request.getStory();
                 List<StoriestRequest> storyDetailsRequests = storyRequest.getStories();
-                // Collect the updated or new Stories
                 List<Stories> updatedStories = IntStream.range(0, storyDetailsRequests.size())
-                                .mapToObj(i -> {
-                                        StoriestRequest storyDetailsRequest = storyDetailsRequests.get(i);
-                                        Stories stories;
-
-                                        if (i < existingStories.size()) {
-                                                stories = existingStories.get(i);
-                                        } else {
-                                                stories = new Stories();
-                                                stories.setId(UUID.randomUUID().toString());
-                                                stories.setStory(story);
-                                                stories.setDate(storyDetailsRequest.getDate());
-                                                stories.setText(storyDetailsRequest.getText());
-                                                stories.setImg(storyDetailsRequest.getImage());
-                                                stories.setTitle(storyDetailsRequest.getTitle());
-                                        }
-
-                                        updateStoryDetails(stories, storyDetailsRequest);
-                                        return stories;
-                                })
-                                .collect(Collectors.toList());
-                // Save all updated or new Stories
+                    .mapToObj(i -> {
+                        try {
+                            StoriestRequest storyDetailsRequest = storyDetailsRequests.get(i);
+                            Stories stories;
+            
+                            // If this is an update of an existing story
+                            if (i < existingStories.size()) {
+                                stories = existingStories.get(i);
+                            } else {
+                                // Create a new story
+                                stories = new Stories();
+                                stories.setId(UUID.randomUUID().toString());
+                                stories.setStory(story);
+                            }
+                            if (storyDetailsRequest.getImage().contains("https")) {
+                                stories.setImg(storyDetailsRequest.getImage()); 
+                            } else {
+                                // Delete the old image if needed and upload the new one
+                                if (Objects.nonNull(stories.getImg()) && !stories.getImg().contains("https")) {
+                                    imageUploadService.deleteImageStorage(stories.getImg());
+                                }
+                                GetImageStorage uploadImagetoStorage = imageUploadService
+                                    .uploadImagetoStorage(storyDetailsRequest.getImage());
+                                stories.setImg(uploadImagetoStorage.getImageUrl());
+                            }
+            
+                            // Update the remaining details (title, text, date)
+                            updateStoryDetails(stories, storyDetailsRequest);
+            
+                            return stories;
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
                 storiesRepository.saveAll(updatedStories);
-                // Remove any extra existing Stories
                 if (storyDetailsRequests.size() < existingStories.size()) {
-                        List<Stories> extraStories = existingStories.subList(storyDetailsRequests.size(),
-                                        existingStories.size());
-                        storiesRepository.deleteAll(extraStories);
+                    List<Stories> extraStories = existingStories.subList(storyDetailsRequests.size(), existingStories.size());
+                    storiesRepository.deleteAll(extraStories);
                 }
                 return storyRepository.save(story);
-        }
-
-        private void updateStoryDetails(Stories stories, StoriestRequest storyDetailsRequest) {
+            }
+            
+            private void updateStoryDetails(Stories stories, StoriestRequest storyDetailsRequest) throws IOException {
                 if (Objects.nonNull(storyDetailsRequest.getTitle())) {
-                        stories.setTitle(storyDetailsRequest.getTitle());
+                    stories.setTitle(storyDetailsRequest.getTitle());
                 }
                 if (Objects.nonNull(storyDetailsRequest.getText())) {
-                        stories.setText(storyDetailsRequest.getText());
-                }
-                if (Objects.nonNull(storyDetailsRequest.getImage())) {
-                        stories.setImg(storyDetailsRequest.getImage());
+                    stories.setText(storyDetailsRequest.getText());
                 }
                 if (Objects.nonNull(storyDetailsRequest.getDate())) {
-                        stories.setDate(storyDetailsRequest.getDate());
+                    stories.setDate(storyDetailsRequest.getDate());
                 }
-        }
+            }
+            
 
-        private Galery updateGalery(Projects projects, ProjectRequest request) {
+            private Galery updateGalery(Projects projects, ProjectRequest request) throws IOException {
+                // Find the existing Galery by project
                 Galery galery = galeryRepository.findByProject(projects)
-                                .orElseThrow(() -> new IllegalArgumentException("Galery not found for the project"));
-
+                    .orElseThrow(() -> new IllegalArgumentException("Galery not found for the project"));
+            
                 // Update Galery fields
                 if (Objects.nonNull(request.getGalery().getIsShow())) {
-                        galery.setShow(request.getGalery().getIsShow());
+                    galery.setShow(request.getGalery().getIsShow());
                 }
-
+                // Get existing galeries and incoming galery data
                 List<Galeries> existingGaleries = galeriesRepository.findByGalery(galery);
                 GaleryRequest galeryRequest = request.getGalery();
-
+            
+                // Process incoming galeries
                 for (int i = 0; i < galeryRequest.getGaleries().size(); i++) {
-                        String galerieString = galeryRequest.getGaleries().get(i);
-
-                        if (i < existingGaleries.size()) {
-                                Galeries galeries = existingGaleries.get(i);
-                                updateGaleries(galeries, galerieString);
-                                galeriesRepository.save(galeries);
-                        } else {
-                                Galeries newGaleries = new Galeries();
-                                newGaleries.setId(UUID.randomUUID().toString());
-                                newGaleries.setGalery(galery);
-                                updateGaleries(newGaleries, galerieString);
-                                galeriesRepository.save(newGaleries);
-                        }
+                    String galerieString = galeryRequest.getGaleries().get(i);
+            
+                    if (i < existingGaleries.size()) {
+                        // Update existing Galeries
+                        Galeries galeries = existingGaleries.get(i);
+                        updateGaleries(galeries, galerieString);
+                        galeriesRepository.save(galeries);
+                    } else {
+                        // Create new Galeries
+                        Galeries newGaleries = new Galeries();
+                        newGaleries.setId(UUID.randomUUID().toString());
+                        newGaleries.setGalery(galery);
+                        updateGaleries(newGaleries, galerieString);
+                        galeriesRepository.save(newGaleries);
+                    }
                 }
-
+            
                 // Remove any extra existing Galeries
                 if (galeryRequest.getGaleries().size() < existingGaleries.size()) {
-                        for (int i = galeryRequest.getGaleries().size(); i < existingGaleries.size(); i++) {
-                                galeriesRepository.delete(existingGaleries.get(i));
-                        }
+                    for (int i = galeryRequest.getGaleries().size(); i < existingGaleries.size(); i++) {
+                        galeriesRepository.delete(existingGaleries.get(i));
+                    }
                 }
-
+            
+                // Save the updated Galery and return it
                 return galeryRepository.save(galery);
-        }
-
-        private void updateGaleries(Galeries galeries, String item) {
+            }
+            
+            private void updateGaleries(Galeries galeries, String item) throws IOException {
                 if (item != null) {
-                        galeries.setImg(item);
+                    // Check if the item is a URL or Base64-encoded image
+                    if (item.contains("https")) {
+                        galeries.setImg(item); // It's already a URL, just set it
+                    } else {
+                        // If there's an existing image, delete it
+                        if (Objects.nonNull(galeries.getImg()) && !galeries.getImg().contains("https")) {
+                            imageUploadService.deleteImageStorage(galeries.getImg());
+                        }
+            
+                        // Upload the new Base64 image
+                        GetImageStorage galeryImage = imageUploadService.uploadImagetoStorage(item);
+                        galeries.setImg(galeryImage.getImageUrl());
+                    }
                 }
-        }
+            }
+            
 
         private Gift updateGift(Projects projects, ProjectRequest request) {
                 Gift gift = giftRepository.findByProject(projects).orElseThrow();

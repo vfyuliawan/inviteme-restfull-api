@@ -5,6 +5,7 @@ public enum ApiEnum {
     UPLOAD_DIR("uploads/"),
     UPLOAD_URL("https://olive-hornet-950635.hostingersite.com/upload.php"),
     UPLOAD_URL_UAT("https://olive-hornet-950635.hostingersite.com/uploaduat.php"),
+    DELETE_URL_UAT("https://olive-hornet-950635.hostingersite.com/deleteuat.php"),
     BASE_URL_STORAGE("https://olive-hornet-950635.hostingersite.com/");
 
 
@@ -30,7 +31,11 @@ public enum ApiEnum {
         return UPLOAD_URL_UAT.getValue();
     }
 
-    public static String getURLStorage() {
+    public static String getDeleteURLUAT() {
+        return DELETE_URL_UAT.getValue();
+    }
+
+    public static String getBaseURLStorage() {
         return BASE_URL_STORAGE.getValue();
     }
 

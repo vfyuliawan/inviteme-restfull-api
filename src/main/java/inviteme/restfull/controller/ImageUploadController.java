@@ -7,23 +7,43 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import inviteme.restfull.model.response.GetImageStorage;
+import inviteme.restfull.model.response.ResponseImageStorage;
 import inviteme.restfull.model.response.WebResponse;
 import inviteme.restfull.service.ImageUploadService;
 
 @RestController
-@RequestMapping("/api/v1/upload")
+@RequestMapping("/api/v1/image")
 
 public class ImageUploadController {
 
     @Autowired
     private ImageUploadService imageUploadService;
 
-    @PostMapping(path = "/image", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/upload", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<WebResponse<String>> uploadImage(@RequestBody String file) {
         try {
             GetImageStorage uploadImagetoStorage = imageUploadService.uploadImagetoStorage(file);
             WebResponse<String> response = WebResponse.<String>builder().code("00").message(uploadImagetoStorage.getMessage())
                     .result(uploadImagetoStorage.getImageUrl()).build();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            WebResponse<String> errorResponse = WebResponse.<String>builder()
+                    .code("11")
+                    .message("failed")
+                    .messageError(e.getMessage())
+                    .build();
+
+            // Return 500 Internal Server Error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping(path = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<WebResponse<String>> deleteImage(@RequestBody String file) {
+        try {
+            ResponseImageStorage delImageStorage = imageUploadService.deleteImageStorage(file);
+            WebResponse<String> response = WebResponse.<String>builder().code("00").message(delImageStorage.getMessage())
+                    .result(delImageStorage.getMessage()).build();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             WebResponse<String> errorResponse = WebResponse.<String>builder()
