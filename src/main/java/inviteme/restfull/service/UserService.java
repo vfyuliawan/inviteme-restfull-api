@@ -14,6 +14,7 @@ import inviteme.restfull.entiity.User;
 import inviteme.restfull.model.request.RegisterUserRequest;
 import inviteme.restfull.model.request.UserInquiryRequest;
 import inviteme.restfull.model.request.UserUpdateRequest;
+import inviteme.restfull.model.response.GetImageStorage;
 import inviteme.restfull.model.response.PagingResponse;
 import inviteme.restfull.model.response.UserInquiryResponse;
 import inviteme.restfull.model.response.UserResponse;
@@ -21,6 +22,8 @@ import inviteme.restfull.model.response.UserUpdateResponse;
 import inviteme.restfull.repository.UserRepository;
 import inviteme.restfull.security.BCrypt;
 import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+
 
 
 import java.util.*;
@@ -41,6 +44,9 @@ public class UserService {
 
     @Autowired
     private GetUserService getUserService;
+
+    @Autowired
+    private ImageUploadService imageUploadService;
 
     @Transactional
     public void registerUser(RegisterUserRequest registerUserRequest) {
@@ -76,7 +82,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserUpdateResponse update(UserUpdateRequest request) {
+    public UserUpdateResponse update(UserUpdateRequest request) throws IOException {
         validationService.validated(request);
         User user = getUserService.getUserLogin();
         if (Objects.nonNull(request.getName())) {
@@ -96,7 +102,20 @@ public class UserService {
         }
 
         if (Objects.nonNull(request.getPhoto())) {
-            user.setPhoto(request.getPhoto());
+            if (request.getPhoto().contains("https")) {
+                user.setPhoto(request.getPhoto());
+            }else{
+                if (!Objects.nonNull(user.getPhoto())) {
+                    GetImageStorage userPhoto = imageUploadService.uploadImagetoStorage(request.getPhoto());
+                    user.setPhoto(userPhoto.getImageUrl());
+                }else{
+                    imageUploadService.deleteImageStorage(user.getPhoto());
+                    GetImageStorage userPhoto = imageUploadService.uploadImagetoStorage(request.getPhoto());
+                    user.setPhoto(userPhoto.getImageUrl());
+                }
+              
+
+            }
         }
 
         userRepository.save(user);

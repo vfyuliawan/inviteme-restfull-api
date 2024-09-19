@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 
+
+import java.io.IOException;;
+
 @RestController
 @RequestMapping("/api/v1")
 
@@ -63,7 +66,7 @@ public class UserController {
 
     @PatchMapping(path = "/user/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public WebResponse<UserUpdateResponse> updateUser(
-            @RequestBody UserUpdateRequest request) {
+            @RequestBody UserUpdateRequest request) throws IOException {
         UserUpdateResponse userResponse = userService.update(request);
         return WebResponse.<UserUpdateResponse>builder()
                 .result(userResponse)
