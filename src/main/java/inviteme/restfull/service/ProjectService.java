@@ -1328,4 +1328,10 @@ public class ProjectService {
 
         }
 
+
+        public boolean checkExistingSlug(String slug){
+                validationService.validated(slug);
+               Boolean existsBySlug = projectRepository.existsByThemeSlug(slug);
+               return !existsBySlug;
+        }
 }

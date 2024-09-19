@@ -209,4 +209,17 @@ public class ProjectController {
                         return response;
                 }
         }
+
+        @GetMapping(path = "project/cekSlug")
+        public WebResponse<Boolean> getMethodName(@RequestParam String slug) throws Exception{
+                try {
+                        boolean checkExistingSlug = projectService.checkExistingSlug(slug);
+                        var response =  WebResponse.<Boolean>builder().code("00").message(!checkExistingSlug ? "slug allready Used" : "Ready to use this slug" ).result(checkExistingSlug).build();
+                        return response;
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+ 
+        }
+        
 }

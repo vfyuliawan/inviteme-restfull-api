@@ -21,8 +21,12 @@ public interface ProjectRepositry extends JpaRepository<Projects, String> {
 
         Optional<Projects> findById(String id);
 
+
         @Query("SELECT p FROM Projects p JOIN p.theme t WHERE t.slug = :slug")
         Optional<Projects> findByThemeSlug(@Param("slug") String slug);
+
+        //correct this i dlike to check if slug exist in projects tabel or not
+        Boolean existsByThemeSlug(@Param("slug") String slug);
         
 
 }
