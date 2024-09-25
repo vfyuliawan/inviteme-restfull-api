@@ -19,6 +19,11 @@ public interface ProjectRepositry extends JpaRepository<Projects, String> {
 
         Page<Projects> findByUserOrderByPublishDateDesc(User user, Pageable pageable);
 
+
+        Page<Projects> findByTitleContainingOrderByPublishDateDesc(String title, Pageable pageable);
+
+        Page<Projects> OrderByPublishDateDesc(Pageable pageable);
+
         Optional<Projects> findById(String id);
 
 

@@ -1,5 +1,6 @@
 package inviteme.restfull.model.response;
 
+import inviteme.restfull.entiity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class UserResponse {
     private String email;
 
     private String photo;
+    private Role role;
 
 
 }

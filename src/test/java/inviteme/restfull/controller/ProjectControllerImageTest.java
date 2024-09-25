@@ -32,7 +32,7 @@ public class ProjectControllerImageTest {
 
         @Test
         void deleteAllProjcet(){
-                        projectRepositry.deleteAll();
+                        // projectRepositry.deleteAll();
 
         }
 }

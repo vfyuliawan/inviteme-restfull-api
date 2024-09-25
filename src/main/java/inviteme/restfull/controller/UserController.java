@@ -55,6 +55,7 @@ public class UserController {
         userResponse.setName(userLogin.getName());
         userResponse.setAlamat(userLogin.getAlamat());
         userResponse.setEmail(userLogin.getEmail());
+        userResponse.setRole(userLogin.getRole());
         userResponse.setUsername(userLogin.getUsername());
         userResponse.setPhoto(userLogin.getPhoto());
         return WebResponse.<UserResponse>builder()

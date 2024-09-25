@@ -2,6 +2,8 @@ package inviteme.restfull.model.response;
 
 import java.time.LocalDateTime;
 
+import inviteme.restfull.model.response.ProjectResponse.HeroResponse;
+import inviteme.restfull.model.response.ProjectResponse.HomeResponse;
 import inviteme.restfull.model.response.ProjectResponse.ThemeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,4 +22,6 @@ public class GetProjectResponse {
     private LocalDateTime date;
     private LocalDateTime publishDate;
     private ThemeResponse theme;
+    private String heroImage;
+    private String quotes;
 }

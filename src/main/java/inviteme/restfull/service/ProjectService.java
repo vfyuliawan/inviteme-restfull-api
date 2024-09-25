@@ -31,6 +31,7 @@ import inviteme.restfull.model.response.ProjectResponse.BraidInfoResponse;
 import inviteme.restfull.model.response.ProjectResponse.GaleryResponse;
 import inviteme.restfull.model.response.ProjectResponse.GiftResponse;
 import inviteme.restfull.model.response.ProjectResponse.GiftsResponse;
+import inviteme.restfull.model.response.ProjectResponse.HeroResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoAcaraResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoAkadResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoResepsiResponse;
@@ -806,11 +807,11 @@ public class ProjectService {
                 validationService.validated(request);
 
                 if (request.getTitle() == null || request.getTitle().isEmpty()) {
-                        projectPage = projectRepository.findByUserOrderByPublishDateDesc(
-                                        user, PageRequest.of(request.getCurrentPage(), request.getSize()));
+                        projectPage = projectRepository.OrderByPublishDateDesc(
+                                       PageRequest.of(request.getCurrentPage(), request.getSize()));
                 } else {
-                        projectPage = projectRepository.findByTitleContainingAndUserOrderByPublishDateDesc(
-                                        request.getTitle(), user,
+                        projectPage = projectRepository.findByTitleContainingOrderByPublishDateDesc(
+                                        request.getTitle(), 
                                         PageRequest.of(request.getCurrentPage(), request.getSize()));
                 }
 
@@ -828,6 +829,8 @@ public class ProjectService {
                                         .username(item.getUser().getUsername())
                                         .date(item.getCountdown())
                                         .publishDate(item.getPublishDate())
+                                        .heroImage(item.getHero().getImg())
+                                        .quotes(item.getHome().getQuotes())
                                         .theme(themeResponse)
                                         .build();
                 }).collect(Collectors.toList());
@@ -870,6 +873,8 @@ public class ProjectService {
                                                 .username(item.getUser().getUsername())
                                                 .publishDate(item.getPublishDate())
                                                 .date(item.getCountdown())
+                                                .heroImage(item.getHero().getImg())
+                                                .quotes(item.getHome().getQuotes())
                                                 .theme(themeResponse)
                                                 .build();
                         }).collect(Collectors.toList());
