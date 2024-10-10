@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProjectResponse {
 
+    private String id;
     private String title;
     private LocalDateTime countdown;
     private LocalDateTime publishDate;

@@ -45,7 +45,7 @@ public class Base64Utils {
             }
             byte[] decodeBase64String = Base64.getDecoder().decode(base64Data);
             String fileFormat = base64String.split(",")[0].split("/")[1].split(";")[0].trim();
-            String filePath = ApiEnum.getUploadDir() + "/" + LocalDateTime.now() + ".jpeg";
+            String filePath = ApiEnum.getUploadDir() + "/" + LocalDateTime.now() + ".png";
             MultipartFile writeBytesToFile = writeBytesToFile(decodeBase64String, filePath, fileFormat, username);
 
             return writeBytesToFile;

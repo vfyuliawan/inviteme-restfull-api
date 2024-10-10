@@ -785,6 +785,7 @@ public class ProjectService {
 
                 return ProjectResponse.builder()
                                 .title(projects.getTitle() != null ? projects.getTitle() : "")
+                                .id(projects.getId())
                                 .countdown(projects.getCountdown())
                                 .publishDate(projects.getPublishDate())
                                 .hero(heroResponse != null ? heroResponse : null)
