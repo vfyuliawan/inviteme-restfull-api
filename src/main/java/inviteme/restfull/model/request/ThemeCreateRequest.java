@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class ThemeCreateRequest {
 
     private String themeName;
-    private String themeColor;
+    private String primaryColor;
+    private String secondaryColor;
     private String bgImage;
     private String fgImage;
 

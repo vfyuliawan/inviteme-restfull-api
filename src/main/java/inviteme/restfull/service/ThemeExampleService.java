@@ -45,7 +45,8 @@ public class ThemeExampleService {
             }
             List<ThemeExampleResponse> themeInquiry = themeByName.getContent().stream().map(item -> {
                 ThemeExampleResponse theme = ThemeExampleResponse.builder().themeName(item.getName())
-                        .themeColor(item.getColor()).id(item.getId()).bgImage(item.getBgimg()).fgImage(item.getFgimg())
+                        .primaryColor(item.getPrimaryColor()).secondaryColor(item.getSecondaryColor()).id(item.getId())
+                        .bgImage(item.getBgimg()).fgImage(item.getFgimg())
                         .createdAt(item.getCreatedAt())
                         .build();
                 return theme;
@@ -74,8 +75,12 @@ public class ThemeExampleService {
                 themeExample.setName(request.getThemeName());
             }
 
-            if (Objects.nonNull(request.getThemeColor())) {
-                themeExample.setColor(request.getThemeColor());
+            if (Objects.nonNull(request.getPrimaryColor())) {
+                themeExample.setPrimaryColor(request.getPrimaryColor());
+            }
+
+            if (Objects.nonNull(request.getSecondaryColor())) {
+                themeExample.setSecondaryColor(request.getSecondaryColor());
             }
 
             if (Objects.nonNull(request.getBgImage())) {
@@ -91,7 +96,8 @@ public class ThemeExampleService {
             ThemeExample saveTheme = themeExampleRepository.save(themeExample);
             ThemeExampleResponse response = ThemeExampleResponse.builder().id(saveTheme.getId())
                     .themeName(saveTheme.getName())
-                    .themeColor(saveTheme.getColor())
+                    .primaryColor(saveTheme.getPrimaryColor())
+                    .secondaryColor(saveTheme.getSecondaryColor())
                     .bgImage(saveTheme.getBgimg())
                     .fgImage(saveTheme.getFgimg())
                     .createdAt(saveTheme.getCreatedAt())
@@ -102,13 +108,12 @@ public class ThemeExampleService {
         }
     }
 
-
-    public Boolean deleteTheme(String id) throws IOException{
+    public Boolean deleteTheme(String id) throws IOException {
         try {
             if (themeExampleRepository.existsById(id)) {
                 themeExampleRepository.deleteById(id);
                 return true;
-            }else{
+            } else {
                 return false;
             }
         } catch (Exception e) {

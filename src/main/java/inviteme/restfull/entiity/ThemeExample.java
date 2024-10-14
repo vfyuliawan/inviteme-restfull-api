@@ -30,8 +30,11 @@ public class ThemeExample {
     @Column(name = "theme_name")
     private String name;
 
-    @Column(name = "theme_color")
-    private String color;
+    @Column(name = "primary_color")
+    private String primaryColor;
+
+    @Column(name = "secondary_color")
+    private String secondaryColor;
 
     @Column
     private String bgimg;
