@@ -79,7 +79,7 @@ public class ProjectResponse {
 
         private String embeded;
 
-        private String theme;
+        private ThemeExampleResponseV2 theme;
 
         private String music;
 

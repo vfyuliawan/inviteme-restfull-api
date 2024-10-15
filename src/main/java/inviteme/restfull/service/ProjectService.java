@@ -13,6 +13,7 @@ import inviteme.restfull.entiity.Projects;
 import inviteme.restfull.entiity.Stories;
 import inviteme.restfull.entiity.Story;
 import inviteme.restfull.entiity.Theme;
+import inviteme.restfull.entiity.ThemeExample;
 import inviteme.restfull.entiity.User;
 import inviteme.restfull.enumiration.ApiEnum;
 import inviteme.restfull.model.request.ProjectInquiryRequest;
@@ -27,6 +28,8 @@ import inviteme.restfull.model.response.GetProjectResponse;
 import inviteme.restfull.model.response.PagingResponse;
 import inviteme.restfull.model.response.ProjectInquiryResponse;
 import inviteme.restfull.model.response.ProjectResponse;
+import inviteme.restfull.model.response.ThemeExampleResponse;
+import inviteme.restfull.model.response.ThemeExampleResponseV2;
 import inviteme.restfull.model.response.ProjectResponse.BraidInfoResponse;
 import inviteme.restfull.model.response.ProjectResponse.GaleryResponse;
 import inviteme.restfull.model.response.ProjectResponse.GiftResponse;
@@ -51,6 +54,7 @@ import inviteme.restfull.repository.InfoAcaraRepository;
 import inviteme.restfull.repository.ProjectRepositry;
 import inviteme.restfull.repository.StoriesRepository;
 import inviteme.restfull.repository.StoryRepository;
+import inviteme.restfull.repository.ThemeExampleRepository;
 import inviteme.restfull.repository.ThemeRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -127,6 +131,9 @@ public class ProjectService {
 
         @Autowired
         private ImageUploadService imageUploadService;
+
+        @Autowired
+        private ThemeExampleRepository themeExampleRepository;
 
         @Transactional
         public ProjectResponse createProject(
@@ -323,6 +330,16 @@ public class ProjectService {
                 return fileName;
         }
 
+        private ThemeExampleResponseV2 toThemeExampleResponse(String themeId) {
+                ThemeExample themeExample = themeExampleRepository.findById(themeId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found"));
+                ThemeExampleResponseV2 themeExampleResponse = ThemeExampleResponseV2.builder()
+                                .themeName(themeExample.getName()).primaryColor(themeExample.getPrimaryColor())
+                                .secondaryColor(themeExample.getSecondaryColor()).build();
+
+                return themeExampleResponse;
+        }
+
         private ProjectResponse toProjectResponse(Projects projects, String username) {
                 Hero hero = projects.getHero();
                 ProjectResponse.HeroResponse heroResponse = ProjectResponse.HeroResponse.builder()
@@ -348,10 +365,12 @@ public class ProjectService {
                                 .isShow(cover.getIsShow())
                                 .build();
 
+                ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(projects.getTheme().getTheme());
+
                 ThemeResponse themeResponse = ProjectResponse.ThemeResponse.builder()
                                 .slug(projects.getTheme().getSlug())
                                 .alamat(projects.getTheme().getAlamat())
-                                .theme(projects.getTheme().getTheme())
+                                .theme(themeExampleResponse)
                                 .music(projects.getTheme().getMusic())
                                 .embeded(projects.getTheme().getEmbeded())
                                 .build();
@@ -694,10 +713,12 @@ public class ProjectService {
                                 .isShow(cover.getIsShow())
                                 .build();
 
+                                ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(projects.getTheme().getTheme());
+
                 ThemeResponse themeResponse = ProjectResponse.ThemeResponse.builder()
                                 .slug(projects.getTheme().getSlug())
                                 .alamat(projects.getTheme().getAlamat())
-                                .theme(projects.getTheme().getTheme())
+                                .theme(themeExampleResponse)
                                 .music(projects.getTheme().getMusic())
                                 .embeded(projects.getTheme().getEmbeded())
                                 .build();
@@ -809,20 +830,22 @@ public class ProjectService {
 
                 if (request.getTitle() == null || request.getTitle().isEmpty()) {
                         projectPage = projectRepository.OrderByPublishDateDesc(
-                                       PageRequest.of(request.getCurrentPage(), request.getSize()));
+                                        PageRequest.of(request.getCurrentPage(), request.getSize()));
                 } else {
                         projectPage = projectRepository.findByTitleContainingOrderByPublishDateDesc(
-                                        request.getTitle(), 
+                                        request.getTitle(),
                                         PageRequest.of(request.getCurrentPage(), request.getSize()));
                 }
 
                 List<GetProjectResponse> listProject = projectPage.getContent().stream().map(item -> {
                         ThemeResponse themeResponse = new ThemeResponse();
+                        ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(item.getTheme().getTheme());
+
                         themeResponse.setAlamat(item.getTheme().getAlamat());
                         themeResponse.setEmbeded(item.getTheme().getEmbeded());
                         themeResponse.setMusic(item.getTheme().getMusic());
                         themeResponse.setSlug(item.getTheme().getSlug());
-                        themeResponse.setTheme(item.getTheme().getTheme());
+                        themeResponse.setTheme(themeExampleResponse);
 
                         return GetProjectResponse.builder()
                                         .title(item.getTitle())
@@ -862,11 +885,14 @@ public class ProjectService {
                                                         PageRequest.of(request.getCurrentPage(), request.getSize()));
                         List<GetProjectResponse> listProject = projectPage.getContent().stream().map(item -> {
                                 ThemeResponse themeResponse = new ThemeResponse();
+                                ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(
+                                                item.getTheme().getTheme());
+
                                 themeResponse.setAlamat(item.getTheme().getAlamat());
                                 themeResponse.setEmbeded(item.getTheme().getEmbeded());
                                 themeResponse.setMusic(item.getTheme().getMusic());
                                 themeResponse.setSlug(item.getTheme().getSlug());
-                                themeResponse.setTheme(item.getTheme().getTheme());
+                                themeResponse.setTheme(themeExampleResponse);
 
                                 return GetProjectResponse.builder()
                                                 .title(item.getTitle())
@@ -1150,131 +1176,132 @@ public class ProjectService {
 
         private Story updateStory(Projects projects, ProjectRequest request) throws IOException {
                 Story story = storyRepository.findByProject(projects)
-                    .orElseThrow(() -> new IllegalArgumentException("Story not found for the project"));
+                                .orElseThrow(() -> new IllegalArgumentException("Story not found for the project"));
                 if (Objects.nonNull(request.getStory().getIsShow())) {
-                    story.setShow(request.getStory().getIsShow());
+                        story.setShow(request.getStory().getIsShow());
                 }
                 List<Stories> existingStories = storiesRepository.findByStory(story);
                 StoryRequest storyRequest = request.getStory();
                 List<StoriestRequest> storyDetailsRequests = storyRequest.getStories();
                 List<Stories> updatedStories = IntStream.range(0, storyDetailsRequests.size())
-                    .mapToObj(i -> {
-                        try {
-                            StoriestRequest storyDetailsRequest = storyDetailsRequests.get(i);
-                            Stories stories;
-            
-                            // If this is an update of an existing story
-                            if (i < existingStories.size()) {
-                                stories = existingStories.get(i);
-                            } else {
-                                // Create a new story
-                                stories = new Stories();
-                                stories.setId(UUID.randomUUID().toString());
-                                stories.setStory(story);
-                            }
-                            if (storyDetailsRequest.getImage().contains("https")) {
-                                stories.setImg(storyDetailsRequest.getImage()); 
-                            } else {
-                                // Delete the old image if needed and upload the new one
-                                if (Objects.nonNull(stories.getImg()) && !stories.getImg().contains("https")) {
-                                    imageUploadService.deleteImageStorage(stories.getImg());
-                                }
-                                GetImageStorage uploadImagetoStorage = imageUploadService
-                                    .uploadImagetoStorage(storyDetailsRequest.getImage());
-                                stories.setImg(uploadImagetoStorage.getImageUrl());
-                            }
-            
-                            // Update the remaining details (title, text, date)
-                            updateStoryDetails(stories, storyDetailsRequest);
-            
-                            return stories;
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    })
-                    .collect(Collectors.toList());
+                                .mapToObj(i -> {
+                                        try {
+                                                StoriestRequest storyDetailsRequest = storyDetailsRequests.get(i);
+                                                Stories stories;
+
+                                                // If this is an update of an existing story
+                                                if (i < existingStories.size()) {
+                                                        stories = existingStories.get(i);
+                                                } else {
+                                                        // Create a new story
+                                                        stories = new Stories();
+                                                        stories.setId(UUID.randomUUID().toString());
+                                                        stories.setStory(story);
+                                                }
+                                                if (storyDetailsRequest.getImage().contains("https")) {
+                                                        stories.setImg(storyDetailsRequest.getImage());
+                                                } else {
+                                                        // Delete the old image if needed and upload the new one
+                                                        if (Objects.nonNull(stories.getImg())
+                                                                        && !stories.getImg().contains("https")) {
+                                                                imageUploadService.deleteImageStorage(stories.getImg());
+                                                        }
+                                                        GetImageStorage uploadImagetoStorage = imageUploadService
+                                                                        .uploadImagetoStorage(
+                                                                                        storyDetailsRequest.getImage());
+                                                        stories.setImg(uploadImagetoStorage.getImageUrl());
+                                                }
+
+                                                // Update the remaining details (title, text, date)
+                                                updateStoryDetails(stories, storyDetailsRequest);
+
+                                                return stories;
+                                        } catch (Exception e) {
+                                                throw new RuntimeException(e);
+                                        }
+                                })
+                                .collect(Collectors.toList());
                 storiesRepository.saveAll(updatedStories);
                 if (storyDetailsRequests.size() < existingStories.size()) {
-                    List<Stories> extraStories = existingStories.subList(storyDetailsRequests.size(), existingStories.size());
-                    storiesRepository.deleteAll(extraStories);
+                        List<Stories> extraStories = existingStories.subList(storyDetailsRequests.size(),
+                                        existingStories.size());
+                        storiesRepository.deleteAll(extraStories);
                 }
                 return storyRepository.save(story);
-            }
-            
-            private void updateStoryDetails(Stories stories, StoriestRequest storyDetailsRequest) throws IOException {
+        }
+
+        private void updateStoryDetails(Stories stories, StoriestRequest storyDetailsRequest) throws IOException {
                 if (Objects.nonNull(storyDetailsRequest.getTitle())) {
-                    stories.setTitle(storyDetailsRequest.getTitle());
+                        stories.setTitle(storyDetailsRequest.getTitle());
                 }
                 if (Objects.nonNull(storyDetailsRequest.getText())) {
-                    stories.setText(storyDetailsRequest.getText());
+                        stories.setText(storyDetailsRequest.getText());
                 }
                 if (Objects.nonNull(storyDetailsRequest.getDate())) {
-                    stories.setDate(storyDetailsRequest.getDate());
+                        stories.setDate(storyDetailsRequest.getDate());
                 }
-            }
-            
+        }
 
-            private Galery updateGalery(Projects projects, ProjectRequest request) throws IOException {
+        private Galery updateGalery(Projects projects, ProjectRequest request) throws IOException {
                 // Find the existing Galery by project
                 Galery galery = galeryRepository.findByProject(projects)
-                    .orElseThrow(() -> new IllegalArgumentException("Galery not found for the project"));
-            
+                                .orElseThrow(() -> new IllegalArgumentException("Galery not found for the project"));
+
                 // Update Galery fields
                 if (Objects.nonNull(request.getGalery().getIsShow())) {
-                    galery.setShow(request.getGalery().getIsShow());
+                        galery.setShow(request.getGalery().getIsShow());
                 }
                 // Get existing galeries and incoming galery data
                 List<Galeries> existingGaleries = galeriesRepository.findByGalery(galery);
                 GaleryRequest galeryRequest = request.getGalery();
-            
+
                 // Process incoming galeries
                 for (int i = 0; i < galeryRequest.getGaleries().size(); i++) {
-                    String galerieString = galeryRequest.getGaleries().get(i);
-            
-                    if (i < existingGaleries.size()) {
-                        // Update existing Galeries
-                        Galeries galeries = existingGaleries.get(i);
-                        updateGaleries(galeries, galerieString);
-                        galeriesRepository.save(galeries);
-                    } else {
-                        // Create new Galeries
-                        Galeries newGaleries = new Galeries();
-                        newGaleries.setId(UUID.randomUUID().toString());
-                        newGaleries.setGalery(galery);
-                        updateGaleries(newGaleries, galerieString);
-                        galeriesRepository.save(newGaleries);
-                    }
+                        String galerieString = galeryRequest.getGaleries().get(i);
+
+                        if (i < existingGaleries.size()) {
+                                // Update existing Galeries
+                                Galeries galeries = existingGaleries.get(i);
+                                updateGaleries(galeries, galerieString);
+                                galeriesRepository.save(galeries);
+                        } else {
+                                // Create new Galeries
+                                Galeries newGaleries = new Galeries();
+                                newGaleries.setId(UUID.randomUUID().toString());
+                                newGaleries.setGalery(galery);
+                                updateGaleries(newGaleries, galerieString);
+                                galeriesRepository.save(newGaleries);
+                        }
                 }
-            
+
                 // Remove any extra existing Galeries
                 if (galeryRequest.getGaleries().size() < existingGaleries.size()) {
-                    for (int i = galeryRequest.getGaleries().size(); i < existingGaleries.size(); i++) {
-                        galeriesRepository.delete(existingGaleries.get(i));
-                    }
+                        for (int i = galeryRequest.getGaleries().size(); i < existingGaleries.size(); i++) {
+                                galeriesRepository.delete(existingGaleries.get(i));
+                        }
                 }
-            
+
                 // Save the updated Galery and return it
                 return galeryRepository.save(galery);
-            }
-            
-            private void updateGaleries(Galeries galeries, String item) throws IOException {
+        }
+
+        private void updateGaleries(Galeries galeries, String item) throws IOException {
                 if (item != null) {
-                    // Check if the item is a URL or Base64-encoded image
-                    if (item.contains("https")) {
-                        galeries.setImg(item); // It's already a URL, just set it
-                    } else {
-                        // If there's an existing image, delete it
-                        if (Objects.nonNull(galeries.getImg()) && !galeries.getImg().contains("https")) {
-                            imageUploadService.deleteImageStorage(galeries.getImg());
+                        // Check if the item is a URL or Base64-encoded image
+                        if (item.contains("https")) {
+                                galeries.setImg(item); // It's already a URL, just set it
+                        } else {
+                                // If there's an existing image, delete it
+                                if (Objects.nonNull(galeries.getImg()) && !galeries.getImg().contains("https")) {
+                                        imageUploadService.deleteImageStorage(galeries.getImg());
+                                }
+
+                                // Upload the new Base64 image
+                                GetImageStorage galeryImage = imageUploadService.uploadImagetoStorage(item);
+                                galeries.setImg(galeryImage.getImageUrl());
                         }
-            
-                        // Upload the new Base64 image
-                        GetImageStorage galeryImage = imageUploadService.uploadImagetoStorage(item);
-                        galeries.setImg(galeryImage.getImageUrl());
-                    }
                 }
-            }
-            
+        }
 
         private Gift updateGift(Projects projects, ProjectRequest request) {
                 Gift gift = giftRepository.findByProject(projects).orElseThrow();
@@ -1334,10 +1361,9 @@ public class ProjectService {
 
         }
 
-
-        public boolean checkExistingSlug(String slug){
+        public boolean checkExistingSlug(String slug) {
                 validationService.validated(slug);
-               Boolean existsBySlug = projectRepository.existsByThemeSlug(slug);
-               return !existsBySlug;
+                Boolean existsBySlug = projectRepository.existsByThemeSlug(slug);
+                return !existsBySlug;
         }
 }
