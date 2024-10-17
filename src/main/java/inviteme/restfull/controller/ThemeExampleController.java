@@ -9,7 +9,6 @@ import inviteme.restfull.model.response.ThemeExampleResponse;
 import inviteme.restfull.model.response.ThemeExampleResponseInquiry;
 import inviteme.restfull.model.response.WebResponse;
 import inviteme.restfull.service.ThemeExampleService;
-import jakarta.persistence.EntityResult;
 
 import java.io.IOException;
 
@@ -33,7 +32,8 @@ public class ThemeExampleController {
     public WebResponse<ThemeExampleResponseInquiry> getThemeInquiry(
             @RequestParam(required = false) String themeName,
             @RequestParam(required = false) int currentPage,
-            @RequestParam(required = false) int pageSize)
+            @RequestParam(required = false) int pageSize
+            )
             throws IOException {
         try {
             ThemeExampleInquiryRequest request = ThemeExampleInquiryRequest.builder().currentPage(currentPage)
