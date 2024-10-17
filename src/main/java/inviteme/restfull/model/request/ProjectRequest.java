@@ -92,6 +92,18 @@ public class ProjectRequest {
 
         @NotBlank
         private String music;
+
+        private String primaryColor;
+
+        private String secondaryColor;
+
+        private String textColor1;
+
+        private String textColor2;
+
+
+
+
     }
 
     @Data

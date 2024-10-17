@@ -39,8 +39,6 @@ public class ProjectResponse {
         private Boolean isShow;
     }
 
-    
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -82,6 +80,14 @@ public class ProjectResponse {
         private ThemeExampleResponseV2 theme;
 
         private String music;
+
+        private String primaryColor;
+
+        private String secondaryColor;
+
+        private String textColor1;
+
+        private String textColor2;
 
     }
 

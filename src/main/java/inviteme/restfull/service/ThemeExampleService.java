@@ -45,7 +45,11 @@ public class ThemeExampleService {
             }
             List<ThemeExampleResponse> themeInquiry = themeByName.getContent().stream().map(item -> {
                 ThemeExampleResponse theme = ThemeExampleResponse.builder().themeName(item.getName())
-                        .primaryColor(item.getPrimaryColor()).secondaryColor(item.getSecondaryColor()).id(item.getId())
+                        .primaryColor(item.getPrimaryColor())
+                        .secondaryColor(item.getSecondaryColor())
+                        .textColor1(item.getTextColor1())
+                        .textColor2(item.getTextColor2())
+                        .id(item.getId())
                         .bgImage(item.getBgimg()).fgImage(item.getFgimg())
                         .createdAt(item.getCreatedAt())
                         .build();
@@ -83,6 +87,14 @@ public class ThemeExampleService {
                 themeExample.setSecondaryColor(request.getSecondaryColor());
             }
 
+            if (Objects.nonNull(request.getTextColor1())) {
+                themeExample.setTextColor1(request.getTextColor1());
+            }
+
+            if (Objects.nonNull(request.getTextColor2())) {
+                themeExample.setTextColor2(request.getTextColor2());
+            }
+
             if (Objects.nonNull(request.getBgImage())) {
                 GetImageStorage bgImageStorage = imageUploadService.uploadImagetoStorage(request.getBgImage());
                 themeExample.setBgimg(bgImageStorage.getImageUrl());
@@ -98,6 +110,8 @@ public class ThemeExampleService {
                     .themeName(saveTheme.getName())
                     .primaryColor(saveTheme.getPrimaryColor())
                     .secondaryColor(saveTheme.getSecondaryColor())
+                    .textColor1(saveTheme.getTextColor1())
+                    .textColor2(saveTheme.getTextColor2())
                     .bgImage(saveTheme.getBgimg())
                     .fgImage(saveTheme.getFgimg())
                     .createdAt(saveTheme.getCreatedAt())

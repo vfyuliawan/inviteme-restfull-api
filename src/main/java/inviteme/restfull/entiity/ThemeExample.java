@@ -36,6 +36,12 @@ public class ThemeExample {
     @Column(name = "secondary_color")
     private String secondaryColor;
 
+    @Column(name = "text_color1")
+    private String textColor1;
+
+    @Column(name = "text_color2")
+    private String textColor2;
+
     @Column
     private String bgimg;
 

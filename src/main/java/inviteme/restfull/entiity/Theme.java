@@ -42,4 +42,16 @@ public class Theme {
     @Column(name = "music")
     private String music;
 
+    @Column(name = "primary_color")
+    private String primaryColor;
+
+    @Column(name = "secondary_color")
+    private String secondaryColor;
+
+    @Column(name = "text_color1")
+    private String textColor1;
+
+    @Column(name = "text_color2")
+    private String textColor2;
+
 }

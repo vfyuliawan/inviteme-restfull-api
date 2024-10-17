@@ -17,6 +17,8 @@ public class ThemeExampleResponse {
     private String themeName;
     private String primaryColor;
     private String secondaryColor;
+    private String textColor1;
+    private String textColor2;
     private String bgImage;
     private String fgImage;
     private LocalDateTime createdAt;

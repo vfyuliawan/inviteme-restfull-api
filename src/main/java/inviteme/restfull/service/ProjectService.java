@@ -28,13 +28,11 @@ import inviteme.restfull.model.response.GetProjectResponse;
 import inviteme.restfull.model.response.PagingResponse;
 import inviteme.restfull.model.response.ProjectInquiryResponse;
 import inviteme.restfull.model.response.ProjectResponse;
-import inviteme.restfull.model.response.ThemeExampleResponse;
 import inviteme.restfull.model.response.ThemeExampleResponseV2;
 import inviteme.restfull.model.response.ProjectResponse.BraidInfoResponse;
 import inviteme.restfull.model.response.ProjectResponse.GaleryResponse;
 import inviteme.restfull.model.response.ProjectResponse.GiftResponse;
 import inviteme.restfull.model.response.ProjectResponse.GiftsResponse;
-import inviteme.restfull.model.response.ProjectResponse.HeroResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoAcaraResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoAkadResponse;
 import inviteme.restfull.model.response.ProjectResponse.InfoResepsiResponse;
@@ -335,7 +333,11 @@ public class ProjectService {
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found"));
                 ThemeExampleResponseV2 themeExampleResponse = ThemeExampleResponseV2.builder()
                                 .themeName(themeExample.getName()).primaryColor(themeExample.getPrimaryColor())
-                                .secondaryColor(themeExample.getSecondaryColor()).build();
+                                .secondaryColor(themeExample.getSecondaryColor())
+                                .textColor1(themeExample.getTextColor1())
+                                .textColor2(themeExample.getTextColor2())
+                                .build();
+                                
 
                 return themeExampleResponse;
         }
@@ -373,6 +375,10 @@ public class ProjectService {
                                 .theme(themeExampleResponse)
                                 .music(projects.getTheme().getMusic())
                                 .embeded(projects.getTheme().getEmbeded())
+                                .primaryColor(themeExampleResponse.getPrimaryColor())
+                                .secondaryColor(themeExampleResponse.getSecondaryColor())
+                                .textColor1(themeExampleResponse.getTextColor1())
+                                .textColor2(themeExampleResponse.getTextColor2())
                                 .build();
 
                 InfoAkadResponse akad = InfoAkadResponse.builder()
@@ -516,6 +522,9 @@ public class ProjectService {
 
         public Theme storeNewTheme(Projects projects, ProjectRequest request)
                         throws IOException {
+
+                ThemeExample themeExample = themeExampleRepository.findById(request.getTheme().getTheme())
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Theme Not Found"));
                 Theme theme = new Theme();
                 theme.setId(UUID.randomUUID().toString());
                 theme.setProject(projects);
@@ -524,6 +533,10 @@ public class ProjectService {
                 theme.setEmbeded(request.getTheme().getEmbeded());
                 theme.setTheme(request.getTheme().getTheme());
                 theme.setMusic(request.getTheme().getMusic());
+                theme.setPrimaryColor(themeExample.getPrimaryColor());
+                theme.setSecondaryColor(themeExample.getSecondaryColor());
+                theme.setTextColor1(themeExample.getTextColor1());
+                theme.setTextColor2(themeExample.getTextColor2());
 
                 Theme save = themeRepository.save(theme);
                 return save;
@@ -713,7 +726,7 @@ public class ProjectService {
                                 .isShow(cover.getIsShow())
                                 .build();
 
-                                ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(projects.getTheme().getTheme());
+                ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(projects.getTheme().getTheme());
 
                 ThemeResponse themeResponse = ProjectResponse.ThemeResponse.builder()
                                 .slug(projects.getTheme().getSlug())
@@ -721,6 +734,10 @@ public class ProjectService {
                                 .theme(themeExampleResponse)
                                 .music(projects.getTheme().getMusic())
                                 .embeded(projects.getTheme().getEmbeded())
+                                .primaryColor(projects.getTheme().getPrimaryColor())
+                                .secondaryColor(projects.getTheme().getSecondaryColor())
+                                .textColor1(projects.getTheme().getTextColor1())
+                                .textColor2(projects.getTheme().getTextColor2())
                                 .build();
 
                 InfoAkadResponse akad = InfoAkadResponse.builder()
@@ -823,7 +840,6 @@ public class ProjectService {
 
         @Transactional(readOnly = true)
         public ProjectInquiryResponse projectInquiry(ProjectInquiryRequest request) {
-                User user = getUserService.getUserLogin();
 
                 Page<Projects> projectPage;
                 validationService.validated(request);
@@ -839,7 +855,8 @@ public class ProjectService {
 
                 List<GetProjectResponse> listProject = projectPage.getContent().stream().map(item -> {
                         ThemeResponse themeResponse = new ThemeResponse();
-                        ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(item.getTheme().getTheme());
+                        ThemeExampleResponseV2 themeExampleResponse = toThemeExampleResponse(
+                                        item.getTheme().getTheme());
 
                         themeResponse.setAlamat(item.getTheme().getAlamat());
                         themeResponse.setEmbeded(item.getTheme().getEmbeded());
@@ -1068,6 +1085,21 @@ public class ProjectService {
                 }
                 if (Objects.nonNull(request.getTheme().getTheme())) {
                         theme.setTheme(request.getTheme().getTheme());
+                }
+                if (Objects.nonNull(request.getTheme().getPrimaryColor())) {
+                        theme.setPrimaryColor(request.getTheme().getPrimaryColor());
+                }
+
+                if (Objects.nonNull(request.getTheme().getSecondaryColor())) {
+                        theme.setSecondaryColor(request.getTheme().getSecondaryColor());
+                }
+
+                if (Objects.nonNull(request.getTheme().getTextColor1())) {
+                        theme.setTextColor1(request.getTheme().getTextColor1());
+                }
+
+                if (Objects.nonNull(request.getTheme().getTextColor2())) {
+                        theme.setTextColor2(request.getTheme().getTextColor2());
                 }
 
                 Theme save = themeRepository.save(theme);
