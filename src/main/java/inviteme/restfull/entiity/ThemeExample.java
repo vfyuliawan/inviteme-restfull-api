@@ -36,6 +36,9 @@ public class ThemeExample {
     @Column(name = "secondary_color")
     private String secondaryColor;
 
+    @Column(name = "third_color")
+    private String thirdColor;
+
     @Column(name = "text_color1")
     private String textColor1;
 

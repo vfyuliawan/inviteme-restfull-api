@@ -16,10 +16,19 @@ import java.time.LocalDateTime;
 @Builder
 public class ProjectRequest {
 
-    @NotBlank
     private String title;
 
     private LocalDateTime countdown;
+
+    private String videoLink;
+
+    private Boolean healtProtocol;
+
+    private Boolean isShowLinkFilter;
+
+    private String livelink;
+    
+    private String igFilter;
 
     private HeroRequest hero;
 
@@ -96,6 +105,8 @@ public class ProjectRequest {
         private String primaryColor;
 
         private String secondaryColor;
+
+        private String thirdColor;
 
         private String textColor1;
 

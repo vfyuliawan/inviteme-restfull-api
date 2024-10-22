@@ -73,4 +73,19 @@ public class Projects {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Messages> messageProject;
+
+    @Column(name = "video_link")
+    private String videoLink;
+
+    @Column(name = "health_protocol")
+    private Boolean healtProtocol;
+
+    @Column(name = "is_show_link_filter")
+    private Boolean isShowLinkFilter;
+
+    @Column(name = "live_link")
+    private String livelink;
+
+    @Column(name = "ig_filter")
+    private String igFilter;
 }

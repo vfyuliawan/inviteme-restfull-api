@@ -18,6 +18,11 @@ public class ProjectResponse {
     private String title;
     private LocalDateTime countdown;
     private LocalDateTime publishDate;
+    private String videoLink;
+    private Boolean healtProtocol;
+    private Boolean isShowLinkFilter;
+    private String livelink;
+    private String igFilter;
     private HeroResponse hero;
     private HomeResponse home;
     private CoverResponse cover;
@@ -83,7 +88,9 @@ public class ProjectResponse {
 
         private String primaryColor;
 
-        private String secondaryColor;
+        private String secondaryColor
+        ;
+        private String thirdColor;
 
         private String textColor1;
 

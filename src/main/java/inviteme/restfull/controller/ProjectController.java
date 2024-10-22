@@ -211,7 +211,7 @@ public class ProjectController {
         }
 
         @GetMapping(path = "project/cekSlug")
-        public WebResponse<Boolean> getMethodName(@RequestParam String slug) throws Exception {
+        public WebResponse<Boolean> checkSLug(@RequestParam String slug) throws Exception {
                 try {
                         boolean checkExistingSlug = projectService.checkExistingSlug(slug);
                         var response = WebResponse.<Boolean>builder().code("00")
@@ -223,5 +223,33 @@ public class ProjectController {
                 }
 
         }
+
+        @PatchMapping(path = "/project/addVideo", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        public WebResponse<String> addVideo(@RequestParam String idProject, @RequestParam String videoLink)
+                        throws IOException {
+                try {
+                        String inputVideoLink = projectService.inputVideoLink(videoLink, idProject);
+                        return WebResponse.<String>builder().message("success").code("00").result(inputVideoLink)
+                                        .build();
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+
+        }
+
+
+        @PatchMapping(path = "/project/liveLinkAndIg", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        public WebResponse<String> inputLiveLinkIgFilter(@RequestParam String linkFilter, @RequestParam String linkLive, @RequestParam String projectId) throws IOException{
+                try {
+                        String liveLinkIgFilter = projectService.inputLiveLinkIgFilter(linkFilter, linkLive, projectId);
+                        return WebResponse.<String>builder().message("success").code("00").result(liveLinkIgFilter)
+                        .build();
+
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+        }
+
+
 
 }

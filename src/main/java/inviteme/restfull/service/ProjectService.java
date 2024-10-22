@@ -329,17 +329,22 @@ public class ProjectService {
         }
 
         private ThemeExampleResponseV2 toThemeExampleResponse(String themeId) {
-                ThemeExample themeExample = themeExampleRepository.findById(themeId)
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found"));
-                ThemeExampleResponseV2 themeExampleResponse = ThemeExampleResponseV2.builder()
-                                .themeName(themeExample.getName()).primaryColor(themeExample.getPrimaryColor())
-                                .secondaryColor(themeExample.getSecondaryColor())
-                                .textColor1(themeExample.getTextColor1())
-                                .textColor2(themeExample.getTextColor2())
-                                .build();
-                                
+                try {
+                        ThemeExample themeExample = themeExampleRepository.findById(themeId)
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                        "ThemeExample Not Found"));
+                        ThemeExampleResponseV2 themeExampleResponse = ThemeExampleResponseV2.builder()
+                                        .themeName(themeExample.getName()).primaryColor(themeExample.getPrimaryColor())
+                                        .secondaryColor(themeExample.getSecondaryColor())
+                                        .textColor1(themeExample.getTextColor1())
+                                        .textColor2(themeExample.getTextColor2())
+                                        .build();
 
-                return themeExampleResponse;
+                        return themeExampleResponse;
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+
         }
 
         private ProjectResponse toProjectResponse(Projects projects, String username) {
@@ -449,6 +454,12 @@ public class ProjectService {
                 projects.setUser(user);
                 projects.setTitle(request.getTitle());
                 projects.setCountdown(request.getCountdown());
+                projects.setIsShowLinkFilter(false);
+                projects.setHealtProtocol(false);
+                projects.setIgFilter(null);
+                projects.setLivelink(null);
+                projects.setVideoLink(null);
+
                 projectRepository.save(projects);
 
                 // Create and save entity
@@ -524,7 +535,8 @@ public class ProjectService {
                         throws IOException {
 
                 ThemeExample themeExample = themeExampleRepository.findById(request.getTheme().getTheme())
-                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Theme Not Found"));
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                "Theme Not Found"));
                 Theme theme = new Theme();
                 theme.setId(UUID.randomUUID().toString());
                 theme.setProject(projects);
@@ -736,6 +748,7 @@ public class ProjectService {
                                 .embeded(projects.getTheme().getEmbeded())
                                 .primaryColor(projects.getTheme().getPrimaryColor())
                                 .secondaryColor(projects.getTheme().getSecondaryColor())
+                                .thirdColor(projects.getTheme().getThirdColor())
                                 .textColor1(projects.getTheme().getTextColor1())
                                 .textColor2(projects.getTheme().getTextColor2())
                                 .build();
@@ -819,6 +832,7 @@ public class ProjectService {
 
                 GiftResponse giftResponse = GiftResponse.builder()
                                 .gifts(listGifts)
+                                .isShow(projects.getGift().isShow())
                                 .build();
 
                 return ProjectResponse.builder()
@@ -826,6 +840,11 @@ public class ProjectService {
                                 .id(projects.getId())
                                 .countdown(projects.getCountdown())
                                 .publishDate(projects.getPublishDate())
+                                .livelink(projects.getLivelink())
+                                .igFilter(projects.getIgFilter())
+                                .videoLink(projects.getVideoLink())
+                                .isShowLinkFilter(projects.getIsShowLinkFilter())
+                                .healtProtocol(projects.getHealtProtocol())
                                 .hero(heroResponse != null ? heroResponse : null)
                                 .home(homeResponse != null ? homeResponse : null)
                                 .cover(coverResponse != null ? coverResponse : null)
@@ -945,7 +964,8 @@ public class ProjectService {
         public ProjectResponse getProjectById(String id) {
                 try {
                         Projects project = projectRepository.findById(id).orElseThrow(
-                                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found"));
+                                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                        "Id Project Not Found"));
                         return toNewProjectResponse(project);
                 } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -977,8 +997,34 @@ public class ProjectService {
                         if (!projects.getUser().getToken().equals(user.getToken())) {
                                 throw new SecurityException("User not authorized to update this project");
                         }
-                        projects.setTitle(request.getTitle());
-                        projects.setCountdown(request.getCountdown());
+
+                        if (Objects.nonNull(request.getTitle())) {
+                                projects.setTitle(request.getTitle());
+                        }
+
+                        if (Objects.nonNull(request.getCountdown())) {
+                                projects.setCountdown(request.getCountdown());
+                        }
+
+                        if (Objects.nonNull(request.getHealtProtocol())) {
+                                projects.setHealtProtocol(request.getHealtProtocol());
+                        }
+
+                        if (Objects.nonNull(request.getIsShowLinkFilter())) {
+                                projects.setIsShowLinkFilter(request.getIsShowLinkFilter());
+                        }
+
+                        if (Objects.nonNull(request.getIgFilter())) {
+                                projects.setIgFilter(request.getIgFilter());
+                        }
+
+                        if (Objects.nonNull(request.getVideoLink())) {
+                                projects.setVideoLink(request.getVideoLink());
+                        }
+
+                        if (Objects.nonNull(request.getLivelink())) {
+                                projects.setLivelink(request.getLivelink());
+                        }
 
                         Hero hero = updateHero(projects, request);
                         Home home = updateHome(projects, request);
@@ -1092,6 +1138,10 @@ public class ProjectService {
 
                 if (Objects.nonNull(request.getTheme().getSecondaryColor())) {
                         theme.setSecondaryColor(request.getTheme().getSecondaryColor());
+                }
+
+                if (Objects.nonNull(request.getTheme().getThirdColor())) {
+                        theme.setThirdColor(request.getTheme().getThirdColor());
                 }
 
                 if (Objects.nonNull(request.getTheme().getTextColor1())) {
@@ -1398,4 +1448,33 @@ public class ProjectService {
                 Boolean existsBySlug = projectRepository.existsByThemeSlug(slug);
                 return !existsBySlug;
         }
+
+        public String inputVideoLink(String link, String projectId) throws IOException {
+                try {
+                        Projects projects = projectRepository.findById(projectId)
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                        "Project Id Not Found"));
+                        projects.setVideoLink(link);
+                        projectRepository.save(projects);
+                        return "Success";
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+        }
+
+        public String inputLiveLinkIgFilter(String linkFilter, String linkLive, String projectId) throws IOException {
+                try {
+                        Projects projects = projectRepository.findById(projectId)
+                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                        "Project Id Not Found"));
+                        projects.setIsShowLinkFilter(true);
+                        projects.setIgFilter(linkFilter);
+                        projects.setLivelink(linkLive);
+                        projectRepository.save(projects);
+                        return "Success";
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+        }
+
 }

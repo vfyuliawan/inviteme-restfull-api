@@ -87,6 +87,10 @@ public class ThemeExampleService {
                 themeExample.setSecondaryColor(request.getSecondaryColor());
             }
 
+            if (Objects.nonNull(request.getThirdColor())) {
+                themeExample.setThirdColor(request.getThirdColor());
+            }
+
             if (Objects.nonNull(request.getTextColor1())) {
                 themeExample.setTextColor1(request.getTextColor1());
             }
@@ -96,13 +100,23 @@ public class ThemeExampleService {
             }
 
             if (Objects.nonNull(request.getBgImage())) {
-                GetImageStorage bgImageStorage = imageUploadService.uploadImagetoStorage(request.getBgImage());
-                themeExample.setBgimg(bgImageStorage.getImageUrl());
+                if (!request.getBgImage().contains("https")) {
+                    GetImageStorage bgImageStorage = imageUploadService.uploadImagetoStorage(request.getBgImage());
+                    themeExample.setBgimg(bgImageStorage.getImageUrl());
+                }else{
+                    themeExample.setBgimg(request.getBgImage());
+                }
+               
             }
 
             if (Objects.nonNull(request.getFgImage())) {
-                GetImageStorage fgImageStorage = imageUploadService.uploadImagetoStorage(request.getFgImage());
-                themeExample.setFgimg(fgImageStorage.getImageUrl());
+                if (!request.getFgImage().contains("https")) {
+                    GetImageStorage fgImageStorage = imageUploadService.uploadImagetoStorage(request.getFgImage());
+                    themeExample.setFgimg(fgImageStorage.getImageUrl());
+                }else{
+                    themeExample.setFgimg(request.getFgImage());
+                }
+               
             }
             themeExample.setCreatedAt(LocalDateTime.now());
             ThemeExample saveTheme = themeExampleRepository.save(themeExample);
@@ -110,6 +124,7 @@ public class ThemeExampleService {
                     .themeName(saveTheme.getName())
                     .primaryColor(saveTheme.getPrimaryColor())
                     .secondaryColor(saveTheme.getSecondaryColor())
+                    .thirdColor(saveTheme.getThirdColor())
                     .textColor1(saveTheme.getTextColor1())
                     .textColor2(saveTheme.getTextColor2())
                     .bgImage(saveTheme.getBgimg())
